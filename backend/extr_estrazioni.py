@@ -12,11 +12,14 @@ args = parser.parse_args()
 
 
 mydb = mysql.connector.connect(
-  host="localhost",
-  user="debian-sys-maint",
-  passwd="uvMB19ny5KOciZlt",
-  database="covid"
+  host="colab1.cibio.unitn.it",
+  user="covid_user",
+  passwd="***REMOVED***",
+  database="covid",
+  port=33006,
+  auth_plugin='mysql_native_password'
 )
+
 
 samplesToAdd=[]
 
@@ -33,14 +36,17 @@ for extratcionsFile in glob.glob(args.extr_folder+'/*.xls*'):
 	realDate = '20'+batchDate[0:2]+'-'+batchDate[2:4]+'-'+batchDate[4:6]
 
 
-	for e in range(7,30):
+	for e in range(7,31):
 		if sheet["B"+str(e)].value is not None:
-			barcode= str(sheet["B"+str(e)].value)[0:-2]
+			barcode= str(sheet["B"+str(e)].value)[0:8]
 
 		 
 			samplesToAdd.append( (barcode, realDate,batchName) )
 			print (extratcionsFile,barcode, realDate,batchName)
 
+
+for k in samplesToAdd:
+	print (k)
 
 mycursor = mydb.cursor()
 sql = "INSERT IGNORE INTO estrazioni (barcode, data_estrazione, batch) VALUES (%s, %s,%s)"

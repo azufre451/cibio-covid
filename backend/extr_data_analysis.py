@@ -31,11 +31,14 @@ WellsToAvoid = list(args.well_avoid)
 
 print("Skipping wells: ",' '.join(WellsToAvoid))
 mydb = mysql.connector.connect(
-  host="localhost",
-  user="debian-sys-maint",
-  passwd="uvMB19ny5KOciZlt",
-  database="covid"
+  host="colab1.cibio.unitn.it",
+  user="covid_user",
+  passwd="***REMOVED***",
+  database="covid",
+  port=33006,
+  auth_plugin='mysql_native_password'
 )
+
 
 samplesToAdd=[]
 samplesToCheck=[]
