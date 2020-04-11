@@ -9,10 +9,12 @@
 
 				font-size:18px;
 				background-color:#EEE;
+				border-bottom:1px solid #999;
 			}
 
 			.resultCell.red{ background-color: #eb837a; }
 			.resultCell.green{ background-color: #a2f285; }
+			.resultCellYellow{ background-color: #e0be58; }
 			.intest{
 				background-color:#333;
 				color:white;
@@ -52,7 +54,7 @@
 				<td class="resultCell" style="width:80px; text-align:center" tal:content="pcr/HEX"/>
 
 				<td tal:attributes="class php: (pcr['esito_automatico'] == 'NEGATIVO') ? 'resultCell red' : 'resultCell green'" class="resultCell" style="width:200px; text-align:center" tal:content="pcr/esito_automatico"/>
-				<td tal:attributes="class php: (pcr['esito_pcr'] == 'NEGATIVO') ? 'resultCell red' : 'resultCell green'" class="resultCell" style="width:200px; text-align:center" tal:content="pcr/esito_pcr"/>
+				<td tal:attributes="class php: (pcr['esito_pcr'] == 'NEGATIVO') ? 'resultCell red' : ((pcr['esito_pcr'] == 'POSITIVO')  ? 'resultCell green' : 'resultCellYellow' ) " class="resultCell" style="width:200px; text-align:center" tal:content="pcr/esito_pcr"/>
 
 			</tr>
 		</table>
