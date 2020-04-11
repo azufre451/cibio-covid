@@ -1,7 +1,7 @@
 <?php
 $db_Host = "localhost";
-$db_User = "debian-sys-maint";
-$db_Pass = "uvMB19ny5KOciZlt";
+$db_User = "covid_user";
+$db_Pass = "***REMOVED***";
 $db_Name = 'covid';
 
 
