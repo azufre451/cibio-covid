@@ -6,10 +6,10 @@ $db_Name = 'covid';
 
 
 function mysql_query($q){return Database::query($q);}
-function mysql_fetch_array($q){return mysql_fetch_array($q);}
-function mysql_fetch_assoc($q){return mysql_fetch_assoc($q);}
-function mysql_error(){return mysql_error(Database::$link);}
-function mysql_affected_rows(){return mysql_affected_rows(Database::$link);}
+function mysql_fetch_array($q){return mysqli_fetch_array($q);}
+function mysql_fetch_assoc($q){return mysqli_fetch_assoc($q);}
+function mysql_error(){return mysqli_error(Database::$link);}
+function mysql_affected_rows(){return mysqli_affected_rows(Database::$link);}
 
 class Database
 {
@@ -17,7 +17,7 @@ class Database
 
 	public static function tdbConnect($db_Host,$db_User, $db_Pass,$db_Name)
 	{
-		self::$link=mysql_connect($db_Host,$db_User, $db_Pass,$db_Name);
+		self::$link=mysqli_connect($db_Host,$db_User, $db_Pass,$db_Name);
 	}
 	
 	public static function tdbClose()
@@ -29,7 +29,7 @@ class Database
 	{ 
 		$QR = mysql_query(self::$link,$query);
 		if(mysql_error(self::$link))
-			echo mysql_error(self::$link);
+			echo mysqli_error(self::$link);
 		return $QR;
 	}
 }
