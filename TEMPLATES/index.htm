@@ -5,11 +5,36 @@
 	</head>
 	<body>
 
-		<p> Ricerca Barcode Campione </p>
+		<div style="width:600px; margin:auto;">
+
+		<div style="padding:5px 20px; margin-top: 20px; background-color:#b3dc8e; border: 1px solid #999;">
+		<p style="font-weight:bold;"> Ricerca specifico Barcode Campione </p>
 		<form action="search.php" method="POST">
-			<input type="text" style="width:150px; font-size:20px, border:1px solid black" name="barcode" placeholder="Barcode" />
-			<input type="submit" label="Vai"> Vai </input> 
+			<input type="text" style="width:250px; font-size:20px; padding:4px; border:1px solid black" name="barcode" placeholder="Barcode" />
+			<input type="submit" value="Vai" style="font-size:14px; height:20px;"> Vai </input> 
 		</form> 
+		</div>
+
+
+
+		<div style="padding:5px 20px; margin-top: 20px; background-color:#e8d7a8; border: 1px solid #999;">
+		<p style="font-weight:bold;"> Ricerca per plate di PCR </p>
+		<form action="search.php" method="POST">
+			<input type="text" style="width:250px; font-size:20px; padding:4px; border:1px solid black" name="plate" placeholder="Numero Plate (es: V220041008)" />
+			<input type="submit" value="Vai" style="font-size:14px; height:20px;"> Vai </input> 
+		</form> 
+		</div>
+
+		
+
+		<div style="padding:5px 20px; margin-top: 20px; background-color:#89d1e3; border: 1px solid #999;">
+		<p style="font-weight:bold;"> Ricerca per data di PCR </p>
+		<form action="search.php" method="POST">
+			<input  style="width:250px; font-size:20px; padding:4px; border:1px solid black" name="date" type="date" />
+			<input type="submit" value="Vai" style="font-size:14px; height:20px;"> Vai </input> 
+		</form> 
+		</div>
+ </div>	
 
 	</body>
 </html>
