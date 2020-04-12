@@ -83,7 +83,7 @@ elseif (isSet($_POST['date']))
 	$date = $_POST['date']; 
 	$PCRs = array();                      
 
-	$res = mysql_query("SELECT * FROM pcr_plates WHERE data_pcr = '$date' ORDER BY barcode ASC");
+	$res = mysql_query("SELECT * FROM pcr_plates WHERE data_pcr = '$date' ORDER BY plate ASC, barcode ASC");
 	
 	while ($ras = mysql_fetch_assoc($res))
 	{
