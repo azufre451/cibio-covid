@@ -1,5 +1,5 @@
 <?php
-
+error_reporting(E_ERROR);
 $db_Host = "colab1.cibio.unitn.it";
 $db_User = "covid_user";
 $db_Pass = "Q2GtXNpnKj94IP4HEo0IyvCun";
