@@ -17,9 +17,9 @@ def na2none(a):
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--data_folder', help='foo help')
-parser.add_argument('--well_avoid', default=['A01','H01','A02','A05','A08','A12'], nargs='+')
-parser.add_argument('--platename_from_file',action='store_true')
+parser.add_argument('--data_folder', help='his is the folder containing all the Analisi Excell files. One file per plate.', required=True)
+parser.add_argument('--well_avoid', default=['A01','H01','A02','A05','A08','A12'], nargs='+', help='allows to skip for certain wells in the plate. This is not required and it is already set for the standard use.')
+parser.add_argument('--platename_from_file',action='store_true', help='allows to take the Plate Name from the filename, instead thatn from the designated cell in the template')
 
 
 
