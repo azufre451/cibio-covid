@@ -24,7 +24,7 @@ optional arguments:
   --extr_folder EXTR_FOLDER
                         path to the "Estrazioni" folder. The folder must
                         contain xlsx or xlsm files from the Estrazioni
-                        pipeline. One file per batch mubst pe present.
+                        pipeline. One file for each batch mubst pe provided
 ```
 
 Example:
@@ -41,15 +41,22 @@ Will load all the samples stored in `200410`
 This analyses the "Analisi" files to populate the DB with the results of each PCR plate. The files must be in the right format as defined by the template.
 
 ```
-usage: extr_data_analysis.py [-h] [--data_folder DATA_FOLDER]
+usage: extr_data_analysis.py [-h] --data_folder DATA_FOLDER
                              [--well_avoid WELL_AVOID [WELL_AVOID ...]]
                              [--platename_from_file]
 
 optional arguments:
   -h, --help            show this help message and exit
-  --data_folder DATA_FOLDER 	This is the folder containing all the Analisi Escell files
-  --well_avoid WELL_AVOID [WELL_AVOID ...] allows to skip for certain wells in the plate. This is not required and it is already set for the standard use.
-  --platename_from_file: allows to take the Plate Name from the filename, instead thatn from the designated cell in the template
+  --data_folder DATA_FOLDER
+                        his is the folder containing all the Analisi Excell
+                        files. One file per plate.
+  --well_avoid WELL_AVOID [WELL_AVOID ...]
+                        allows to skip for certain wells in the plate. This is
+                        not required and it is already set for the standard
+                        use.
+  --platename_from_file
+                        allows to take the Plate Name from the filename,
+                        instead thatn from the designated cell in the template
 
 ```
 

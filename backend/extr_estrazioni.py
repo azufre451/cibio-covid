@@ -7,7 +7,7 @@ import glob
 import sys
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--extr_folder', help='path to the "Estrazioni" folder. The folder must contain xlsx or xlsm files from the Estrazioni pipeline. One file per batch mubst pe present.')
+parser.add_argument('--extr_folder', help='path to the "Estrazioni" folder. The folder must contain xlsx or xlsm files from the Estrazioni pipeline. One file per batch mubst pe present.',required=True)
 args = parser.parse_args()
 
 
