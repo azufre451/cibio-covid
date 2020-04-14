@@ -23,7 +23,7 @@ if (isSet($_GET['barcode']) || isSet($_POST['barcode']))
 			}
 		}
 
-		$bcdList = implode(',',$bcdLis);
+		$bcdList = implode("','",$bcdLis);
 	}
 
 	elseif (isSet($_GET['barcode']))
