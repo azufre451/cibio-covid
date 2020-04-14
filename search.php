@@ -13,6 +13,7 @@ if (isSet($_GET['barcode']) || isSet($_POST['barcode']))
 	{
 		//echo "A";
 		$bcdLis = array();
+		$bcdLisReadable=array();
 		$bcd = explode(',',addslashes(trim($_POST['barcode'])));
 
 		foreach($bcd as $elem)
@@ -20,10 +21,14 @@ if (isSet($_GET['barcode']) || isSet($_POST['barcode']))
 			//echo $elem;
 			if ($elem != ''){
 				$bcdLis[] = $elem;
+				$bcdLisReadable[] = $elem;
+				$bcdLis[] = $elem+'01';
+				$bcdLis[] = substr($elem,1,strlen($elem));
 			}
 		}
 
 		$bcdList = implode("','",$bcdLis);
+		$bcdReadableList = implode(", ",$bcdLisReadable);
 	}
 
 	elseif (isSet($_GET['barcode']))
@@ -55,7 +60,7 @@ if (isSet($_GET['barcode']) || isSet($_POST['barcode']))
 	}
 
 	$template = new PHPTAL('TEMPLATES/search_results.html');
-	$template->searchKey = 'Barcode :: '. $bcdList;
+	$template->searchKey = 'Barcode :: '. $bcdReadableList;
 
 	$template->samples = $samples;
 	$template->batches = $batches;
