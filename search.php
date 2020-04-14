@@ -8,16 +8,27 @@ include('includes/PHPTAL-1.3.0/PHPTAL.php');
 
 if (isSet($_GET['barcode']))
 {
-	$bcd = $_GET['barcode'];
+	$bcdLis = array();
+	$bcd = explode(',',addslashes(trim($_GET['barcode'])));
 
-	$res = mysql_query("SELECT * FROM samples WHERE barcode = '$bcd' ");
+	foreach($bcd as $elem)
+	{
+		if ($elem != ''){
+			$bcdLis[] = $elem;
+		}
+	}
+
+	$bcdList = implode(',',$bcdLis);
+
+
+	$res = mysql_query("SELECT * FROM samples WHERE barcode IN ('$bcdList') ");
 	$samples = array();
 	while ($ras = mysql_fetch_assoc($res))
 	{
 		$samples[$ras['barcode']] = $ras;
 	}
 
-	$res = mysql_query("SELECT * FROM estrazioni WHERE barcode = '$bcd' ");
+	$res = mysql_query("SELECT * FROM estrazioni WHERE barcode IN ('$bcdList') ");
 	$batches = array();
 	while ($ras = mysql_fetch_assoc($res))
 	{
@@ -25,7 +36,7 @@ if (isSet($_GET['barcode']))
 	}
 	                                  
 
-	$res = mysql_query("SELECT * FROM pcr_plates WHERE barcode = '$bcd' ORDER BY data_pcr ASC");
+	$res = mysql_query("SELECT * FROM pcr_plates WHERE barcode IN ('$bcdList') ORDER BY data_pcr ASC");
 	$PCRs = array();
 	while ($ras = mysql_fetch_assoc($res))
 	{
@@ -33,7 +44,7 @@ if (isSet($_GET['barcode']))
 	}
 
 	$template = new PHPTAL('TEMPLATES/search_results.html');
-	$template->searchKey = 'Barcode :: '. $bcd;
+	$template->searchKey = 'Barcode :: '. $bcdList;
 
 	$template->samples = $samples;
 	$template->batches = $batches;
