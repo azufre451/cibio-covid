@@ -11,11 +11,13 @@ if (isSet($_GET['barcode']) || isSet($_POST['barcode']))
 
 	if (isSet($_POST['barcode']))
 	{
+		echo "A";
 		$bcdLis = array();
 		$bcd = explode(',',addslashes(trim($_GET['barcode'])));
 
 		foreach($bcd as $elem)
 		{
+			echo $elem;
 			if ($elem != ''){
 				$bcdLis[] = $elem;
 			}
