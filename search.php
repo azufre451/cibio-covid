@@ -42,9 +42,9 @@ if (isSet($_GET['barcode']))
 }
 
 
-elseif (isSet($_POST['plate']))
+elseif (isSet($_GET['plate']))
 {
-	$plate = $_POST['plate'];
+	$plate = $_GET['plate'];
 
 	$res = mysql_query("SELECT * FROM samples WHERE barcode IN (SELECT barcode FROM pcr_plates WHERE plate = '$plate') ");
 	$samples = array();
