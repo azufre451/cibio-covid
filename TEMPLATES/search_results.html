@@ -51,7 +51,7 @@
 			<tr tal:repeat="batch batches">
 				<td class="resultCell" tal:content="batch/barcode"/>
 				<td class="resultCell" tal:content="batch/data_estrazione"/>
-				<td class="resultCell" tal:content="samples/barcode/data_accettazione"/>
+				<td class="resultCell" tal:content="php:isSet(samples[batch['barcode']]['data_accettazione']) ? '*' : ''"/>
 				<td class="resultCell" tal:content="batch/batch"/>
 			</tr>
 		</table>
