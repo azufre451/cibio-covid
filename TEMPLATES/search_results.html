@@ -50,8 +50,9 @@
 			<tr class="intest"><td> Barcode </td> <td> Data di accettazione </td> <td> Batch di accettazione </td></tr>
 			<tr tal:repeat="batch batches">
 				<td class="resultCell" tal:content="batch/barcode"/>
-				<td class="resultCell" tal:content="batch/data_estrazione"/>
-				<td class="resultCell" tal:content="php:isSet(samples[batch['barcode']]['data_accettazione']) ? '*' : ''"/>
+				<td class="resultCell" tal:content="batch/data_estrazione">
+					<span  tal:content="php:(samples[batch['barcode']]['data_accettazione'])"/>
+				</td>
 				<td class="resultCell" tal:content="batch/batch"/>
 			</tr>
 		</table>
