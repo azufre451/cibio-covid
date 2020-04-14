@@ -47,10 +47,11 @@
 
 		<p class="headerText">Campioni associati alla ricerca:</p>
 		<table>
-			<tr class="intest"><td> Barcode </td> <td> Data di prima accettazione </td> <td> Batch di accettazione </td></tr>
+			<tr class="intest"><td> Barcode </td> <td> Data di accettazione </td> <td> Batch di accettazione </td></tr>
 			<tr tal:repeat="batch batches">
 				<td class="resultCell" tal:content="batch/barcode"/>
 				<td class="resultCell" tal:content="batch/data_estrazione"/>
+				<td class="resultCell" tal:content="samples/barcode/data_accettazione"/>
 				<td class="resultCell" tal:content="batch/batch"/>
 			</tr>
 		</table>
