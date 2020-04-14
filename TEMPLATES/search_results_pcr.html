@@ -58,7 +58,7 @@
 			<tr class="intest"> <td> Data PCR </td> <td> Plate </td>  <td> Barcode </td>  <td> Well</td>  <td> Cy5</td> <td> FAM</td> <td> HEX</td>   <td> Esito PCR (Auto) </td> <td> Esito PCR (Finale) </td></tr>
 			<tr tal:attributes="class php: (pcr['esito_pcr'] == 'NEGATIVO') ? 'row_neg' : ((pcr['esito_pcr'] == 'POSITIVO')  ? 'row_pos' : ((pcr['esito_pcr'] == 'RIPETERE ESTRAZIONE') ? 'row_rep_ext' : ((pcr['esito_pcr'] == 'RIPETERE PCR') ? 'row_rep_pcr' : 'row_err' ) )  ) " tal:repeat="pcr PCRs">
 				<td class="resultCell" style="width:120px" tal:content="pcr/data_pcr"/>
-				<td class="resultCell" style="width:120px"><a tal:attributes="href string:search.php?plate=${pcr/plate}" tal:content="pcr/plate" /></td>
+				<td class="resultCell" style="width:120px"><a tal:attributes="href string:search.php?plate=${pcr/plate}" ><span tal:content="php:substr(pcr['plate'],0,strlen(pcr['plate'])-2)" /><span style="font-size:21px; font-weight:bold;" tal:content="php:substr(pcr['plate'],strlen(pcr['plate'])-2)" /></a></td>
 				<td class="resultCell" style="width:120px" ><a tal:attributes="href string:search.php?barcode=${pcr/barcode}" tal:content="pcr/barcode" /></td>
 				<td class="resultCell" style="width:100px; text-align:center" tal:content="pcr/well"/>
 				
