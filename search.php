@@ -6,19 +6,28 @@ include('includes/app_include.php');
 include('includes/PHPTAL-1.3.0/PHPTAL.php');
 
 
-if (isSet($_GET['barcode']))
+if (isSet($_GET['barcode']) || isSet($_POST['barcode']))
 {
-	$bcdLis = array();
-	$bcd = explode(',',addslashes(trim($_GET['barcode'])));
 
-	foreach($bcd as $elem)
+	if (isSet($_POST['barcode']))
 	{
-		if ($elem != ''){
-			$bcdLis[] = $elem;
+		$bcdLis = array();
+		$bcd = explode(',',addslashes(trim($_GET['barcode'])));
+
+		foreach($bcd as $elem)
+		{
+			if ($elem != ''){
+				$bcdLis[] = $elem;
+			}
 		}
+
+		$bcdList = implode(',',$bcdLis);
 	}
 
-	$bcdList = implode(',',$bcdLis);
+	elseif (isSet($_GET['barcode']))
+	{
+		$bcdList = addslashes($_GET['barcode']);
+	}
 
 
 	$res = mysql_query("SELECT * FROM samples WHERE barcode IN ('$bcdList') ");
