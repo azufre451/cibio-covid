@@ -14,7 +14,7 @@ if (isSet($_GET['barcode']))
 	$samples = array();
 	while ($ras = mysql_fetch_assoc($res))
 	{
-		$samples[] = $ras;
+		$samples[$ras['barcode']] = $ras;
 	}
 
 	$res = mysql_query("SELECT * FROM estrazioni WHERE barcode = '$bcd' ");
