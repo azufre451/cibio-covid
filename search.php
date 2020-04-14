@@ -22,6 +22,8 @@ if (isSet($_GET['barcode']) || isSet($_POST['barcode']))
 			if ($elem != ''){
 				$bcdLis[] = $elem;
 				$bcdLisReadable[] = $elem;
+				
+				// ADD this to be extra sure
 				$bcdLis[] = $elem+'01';
 				$bcdLis[] = substr($elem,1,strlen($elem));
 			}
