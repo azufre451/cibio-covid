@@ -45,8 +45,10 @@
 
 		<p class="headerText"> Conteggi per Esito </p>
 		<table>
-			<tr class="intest"><td> Esito </td> <td> Conteggio </td> </tr>
-			<tr tal:repeat="esito esitiTracker">  <td tal:content="repeat/esito/key"></td> <td tal:content="php: esito . ' (' . round(esito/array_sum(esitiTracker),2) . '%)' "></td> </tr>
+			<tr class="intest"><td> Esito </td> <td> Conteggio </td> <td> Percentuale </td> </tr>
+			<tr tal:repeat="esito esitiTracker">  <td tal:content="repeat/esito/key"></td> <td tal:content="esito"></td> <td tal:content="php: round(100*esito/array_sum(esitiTracker),2) . '%'"></td> </tr>
+
+			<tr>  <td> Totale </td> <td tal:content="php:array_sum(esitiTracker)"></td> <td> 100%</td> </tr>
 		</table>
 
  
