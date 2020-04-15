@@ -113,7 +113,8 @@ elseif (isSet($_GET['plate']))
 elseif (isSet($_POST['date']))
 {
 	$date = $_POST['date']; 
-	$PCRs = array();                      
+	$PCRs = array();       
+	$esitiTracker = array();
 
 	$res = mysql_query("SELECT * FROM pcr_plates WHERE data_pcr = '$date' ORDER BY plate ASC, barcode ASC");
 	
@@ -121,6 +122,10 @@ elseif (isSet($_POST['date']))
 	{
 		$ras['extractions'] = array();
 		$PCRs[$ras['barcode']] = $ras;
+		if (!array_key_exists($ras['esito_pcr'], $esitiTracker))
+			$esitiTracker[$ras['esito_pcr']] = 1;
+		else
+			$esitiTracker[$ras['esito_pcr']] += 1;
 	}
 
 	$res = mysql_query("SELECT * FROM estrazioni WHERE barcode IN (SELECT barcode FROM pcr_plates WHERE data_pcr = '$date') ");
@@ -134,6 +139,7 @@ elseif (isSet($_POST['date']))
 	$template = new PHPTAL('TEMPLATES/search_results_pcr.html');
 	$template->searchKey = 'Data di PCR :: '. $date;
 	$template->PCRs = $PCRs;
+	$template->esitiTracker=$esitiTracker;
 
 }
 
