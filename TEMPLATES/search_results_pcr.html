@@ -42,6 +42,13 @@
 	<body>
 
 		<p class="headerText"> Chiave di Ricerca: <span style="color:blue; font-weight:bold;"  tal:content="searchKey" /> </p>
+
+		<p class="headerText"> Conteggi per Esito </p>
+		<table>
+			<tr class="intest"><td> Esito </td> <td> Conteggio </td> </tr>
+			<tr tal:repeat="esito esitiTracker">  <td tal:content="repeat/esito/key"></td> <td tal:content="php: esito . ' (' . round(esito/array_sum(esitiTracker),2) . '%)' "></td> </tr>
+		</table>
+
  
 
 		<p class="headerText">Esito PCR:</p>
