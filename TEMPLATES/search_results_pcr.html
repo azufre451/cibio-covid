@@ -48,7 +48,7 @@
 			<tr class="intest"><td> Esito </td> <td> Conteggio </td> <td> Percentuale </td> </tr>
 			<tr tal:repeat="esito esitiTracker">  <td tal:content="repeat/esito/key"></td> <td tal:content="esito"></td> <td tal:content="php: round(100*esito/array_sum(esitiTracker),2) . '%'"></td> </tr>
 
-			<tr>  <td style="font-weight:bold;"> TOTALE </td> <td  style="font-weight:bold;"tal:content="php:array_sum(esitiTracker)"></td> <td style="font-weight:bold;"> 100%</td> </tr>
+			<tr>  <td style="font-weight:bold;"> TOTALE </td> <td  style="font-weight:bold;" tal:content="php:array_sum(esitiTracker)"></td> <td style="font-weight:bold;"> 100%</td> </tr>
 		</table>
 
  
