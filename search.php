@@ -122,10 +122,15 @@ elseif (isSet($_POST['date']))
 	{
 		$ras['extractions'] = array();
 		$PCRs[$ras['barcode']] = $ras;
-		if (!array_key_exists($ras['esito_pcr'], $esitiTracker))
-			$esitiTracker[$ras['esito_pcr']] = 1;
-		else
-			$esitiTracker[$ras['esito_pcr']] += 1;
+		
+
+		if($ras['esito_pcr'] != 'CONTROLLO')
+		{
+			if (!array_key_exists($ras['esito_pcr'], $esitiTracker))
+				$esitiTracker[$ras['esito_pcr']] = 1;
+			else
+				$esitiTracker[$ras['esito_pcr']] += 1;
+		}
 	}
 
 	$res = mysql_query("SELECT * FROM estrazioni WHERE barcode IN (SELECT barcode FROM pcr_plates WHERE data_pcr = '$date') ");
