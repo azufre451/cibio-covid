@@ -47,7 +47,8 @@ CREATE TABLE `pcr_plates` (
   `FAM` float DEFAULT NULL,
   `HEX` float DEFAULT NULL,
   `esito_automatico` enum('POSITIVO','NEGATIVO','DUBBIO TECNICO') NOT NULL,
-  `esito_pcr` enum('POSITIVO','NEGATIVO','RIPETERE PCR','RIPETERE ESTRAZIONE','ERRORE COMPILAZIONE') NOT NULL
+  `esito_pcr` enum('POSITIVO','NEGATIVO','RIPETERE PCR','RIPETERE ESTRAZIONE','ERRORE COMPILAZIONE') NOT NULL,
+  `isControl` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
