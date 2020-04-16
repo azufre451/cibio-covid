@@ -26,7 +26,7 @@ if (isSet($_GET['barcode']) || isSet($_POST['barcode']))
 				// ADD this to be extra sure
 				$bcdLis[] = '0'.$elem;
 				$bcdLis[] = $elem.'01';
-				$bcdLis[] = '0'.$elem+'01';
+				$bcdLis[] = '0'.$elem.'01';
 				$bcdLis[] = substr($elem,1,strlen($elem));
 				$bcdLis[] = substr($elem,1,strlen($elem)).'01';
 			}
@@ -41,7 +41,7 @@ if (isSet($_GET['barcode']) || isSet($_POST['barcode']))
 		$bcdList = addslashes($_GET['barcode']);
 	}
 
-
+	//echo $bcdList;
 	$res = mysql_query("SELECT * FROM samples WHERE barcode IN ('$bcdList') ");
 	$samples = array();
 	while ($ras = mysql_fetch_assoc($res))
