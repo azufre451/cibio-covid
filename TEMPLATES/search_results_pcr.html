@@ -80,17 +80,17 @@
 
 				<td tal:attributes="class php: (pcr['esito_automatico'] == 'NEGATIVO') ? 'resultCell red' : 'resultCell green'" class="resultCell" style="width:130px; text-align:center" tal:content="pcr/esito_automatico"/>
 				<td class="resultCell fr" style="width:130px; text-align:center" tal:content="pcr/esito_pcr"/>
-				<tr tal:attributes="class php: (pcr['esito_pcr'] == 'NEGATIVO') ? 'row_neg' : ((pcr['esito_pcr'] == 'POSITIVO')  ? 'row_pos' : ((pcr['esito_pcr'] == 'RIPETERE ESTRAZIONE') ? 'row_rep_ext' : ((pcr['esito_pcr'] == 'RIPETERE PCR') ? 'row_rep_pcr' : 'row_err' ) )  ) " >
+				<tr tal:attributes="class php: (pcr['esito_pcr'] == 'NEGATIVO') ? 'row_neg' : ((pcr['esito_pcr'] == 'POSITIVO')  ? 'row_pos' : ((pcr['esito_pcr'] == 'RIPETERE ESTRAZIONE') ? 'row_rep_ext' : ((pcr['esito_pcr'] == 'RIPETERE PCR') ? 'row_rep_pcr' : ((pcr['isControl'] == 1) ? 'row_ctrl' : 'row_err' ) ) )  ) " >
 					<td class="intest" colspan="7"></td>
 					<td class="intest">Estrazione</td>
 					<td class="intest">Batch</td>
 				</tr>
-				<tr tal:attributes="class php: (pcr['esito_pcr'] == 'NEGATIVO') ? 'row_neg' : ((pcr['esito_pcr'] == 'POSITIVO')  ? 'row_pos' : ((pcr['esito_pcr'] == 'RIPETERE ESTRAZIONE') ? 'row_rep_ext' : ((pcr['esito_pcr'] == 'RIPETERE PCR') ? 'row_rep_pcr' : 'row_err' ) )  ) "  tal:repeat="extraction pcr/extractions">
+				<tr tal:attributes="class php: (pcr['esito_pcr'] == 'NEGATIVO') ? 'row_neg' : ((pcr['esito_pcr'] == 'POSITIVO')  ? 'row_pos' : ((pcr['esito_pcr'] == 'RIPETERE ESTRAZIONE') ? 'row_rep_ext' : ((pcr['esito_pcr'] == 'RIPETERE PCR') ? 'row_rep_pcr' : ((pcr['isControl'] == 1) ? 'row_ctrl' : 'row_err' ) ) )  ) "  tal:repeat="extraction pcr/extractions">
 					<td colspan="7"></td>
 					<td style="border-bottom:1px solid #999;" tal:content="extraction/data_estrazione">test</td>
 					<td style="border-bottom:1px solid #999;" tal:content="extraction/batch">test</td>
 				</tr>
-				<tr tal:attributes="class php: (pcr['esito_pcr'] == 'NEGATIVO') ? 'row_neg' : ((pcr['esito_pcr'] == 'POSITIVO')  ? 'row_pos' : ((pcr['esito_pcr'] == 'RIPETERE ESTRAZIONE') ? 'row_rep_ext' : ((pcr['esito_pcr'] == 'RIPETERE PCR') ? 'row_rep_pcr' : 'row_err' ) )  ) "  style="height:20px;"><td></td></tr>
+				<tr tal:attributes="class php: (pcr['esito_pcr'] == 'NEGATIVO') ? 'row_neg' : ((pcr['esito_pcr'] == 'POSITIVO')  ? 'row_pos' : ((pcr['esito_pcr'] == 'RIPETERE ESTRAZIONE') ? 'row_rep_ext' : ((pcr['esito_pcr'] == 'RIPETERE PCR') ? 'row_rep_pcr' : ((pcr['isControl'] == 1) ? 'row_ctrl' : 'row_err' ) ) )  ) "  style="height:20px;"><td></td></tr>
 			</tr>
 		</table>
 
