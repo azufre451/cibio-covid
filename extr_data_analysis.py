@@ -7,7 +7,7 @@ import glob
 import os
 import sys
 from locale import atof, setlocale, LC_NUMERIC
-setlocale(LC_NUMERIC, '') 
+setlocale(LC_NUMERIC, '')
 
 def na2none(a):
 	if a == 'N/A':
@@ -15,10 +15,9 @@ def na2none(a):
 	else:
 		return float(atof(a))
 
-
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_folder', help='foo help')
-parser.add_argument('--well_avoid', default=['A01','H01','A02','A05','A08','A12'], nargs='+')
+parser.add_argument('--well_avoid', default=[], nargs='+')
 parser.add_argument('--platename_from_file',action='store_true')
 
 
@@ -26,6 +25,7 @@ parser.add_argument('--platename_from_file',action='store_true')
 
 args = parser.parse_args()
 
+control_wells = ['NTC','PK','PE']
 WellsToAvoid = list(args.well_avoid)
 
 
@@ -43,9 +43,9 @@ samplesToCheck=[]
 mycursor = mydb.cursor()
 
 for analFile in glob.glob(args.data_folder+'/*.xls*'):
-	
-	wb_obj = openpyxl.load_workbook(analFile,data_only=True, read_only=True) 
-	
+
+	wb_obj = openpyxl.load_workbook(analFile,data_only=True, read_only=True)
+
 	try:
 		sheet = wb_obj["Data"]
 	except:
@@ -67,6 +67,7 @@ for analFile in glob.glob(args.data_folder+'/*.xls*'):
 			well= str(row[1].value)
 			target= str(row[3].value)
 			barcode= str(row[5].value)
+			is_control= int(barcode in control_wells)
 
 
 
@@ -83,28 +84,28 @@ for analFile in glob.glob(args.data_folder+'/*.xls*'):
 			if final_result not in ['POSITIVO','NEGATIVO','RIPETERE ESTRAZIONE','RIPETERE PCR']:
 				final_result = 'ERRORE COMPILAZIONE'
 
-			if well not in WellsToAvoid and barcode not in ['NTC','PK','PE'] and str (barcode) != "0":
+			if well not in WellsToAvoid and str (barcode) != "0":
 				#print(litref,cts,val_cy5,val_fam,val_hex)
 				sql = 'SELECT 1 FROM samples WHERE barcode = %s'
 				mycursor.execute(sql, (barcode,))
 				mycursor.fetchone()
 				if(mycursor.rowcount > 0):
 						#print("OK", plateName,barcode,well,val_cy5,val_fam,val_hex,auto_result,final_result )
-						samplesToAdd.append ( (plateName, plateDate,barcode,well,val_cy5,val_fam,val_hex,auto_result,final_result))
-				
+						samplesToAdd.append ( (plateName, plateDate,barcode,well,val_cy5,val_fam,val_hex,auto_result,final_result, is_control))
+
 				else:
 					if str(barcode) != "0":
-						samplesToCheck.append( (plateName, plateDate,barcode,well,val_cy5,val_fam,val_hex,auto_result,final_result))
+						samplesToCheck.append( (plateName, plateDate,barcode,well,val_cy5,val_fam,val_hex,auto_result,final_result, is_control))
 
 
 
-print("Samples to Check: ",len(samplesToCheck))			
+print("Samples to Check: ",len(samplesToCheck))
 for k in samplesToCheck:
 	print(k)
 
 print("Samples to add: ",len(samplesToAdd))
- 
-sql = 'INSERT IGNORE INTO pcr_plates (plate, data_pcr, barcode, well, Cy5, FAM, HEX, esito_automatico, esito_pcr) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)'
+
+sql = 'INSERT IGNORE INTO pcr_plates (plate, data_pcr, barcode, well, Cy5, FAM, HEX, esito_automatico, esito_pcr, isControl) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
 #print(sql)
 mycursor.executemany(sql, samplesToAdd)
 
