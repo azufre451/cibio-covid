@@ -6,8 +6,10 @@ import argparse
 import glob
 import os
 import sys
-from locale import atof, setlocale, LC_NUMERIC
-setlocale(LC_NUMERIC, '')
+from locale import atof, setlocale, LC_NUMERIC, LC_ALL
+setlocale(LC_NUMERIC,('it_IT','UTF-8'))
+
+
 
 def na2none(a):
 	if a == 'N/A':
@@ -26,7 +28,7 @@ parser.add_argument('--platename_from_file',action='store_true', help='allows to
 
 args = parser.parse_args()
 
-control_wells = ['NTC','PK','PE','55555','77777']
+control_wells = ['NTC','PK','PE','55555','77777','11111111',]
 WellsToAvoid = list(args.well_avoid)
 
 
