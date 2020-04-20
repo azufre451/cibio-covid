@@ -150,7 +150,7 @@ elseif (isSet($_POST['date']))
 	while ($ras = mysql_fetch_assoc($res))
 	{
 		$ras['extractions'] = array();
-		$PCRs[$ras['barcode']] = $ras;
+		
 
 		
 		if($ras['isControl'] == 1)
@@ -175,6 +175,8 @@ elseif (isSet($_POST['date']))
 			else
 				$esitiTracker[$ras['esito_pcr']] += 1;
 		}
+
+		$PCRs[$ras['barcode']] = $ras;
 	}
 
 	$res = mysql_query("SELECT * FROM estrazioni WHERE barcode IN (SELECT barcode FROM pcr_plates WHERE data_pcr = '$date') ");
