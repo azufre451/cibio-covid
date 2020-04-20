@@ -61,6 +61,20 @@ if (isSet($_GET['barcode']) || isSet($_POST['barcode']))
 	$PCRs = array();
 	while ($ras = mysql_fetch_assoc($res))
 	{
+
+		if($ras['isControl'] == 1)
+			$htmlClass='row_ctrl';
+		else if($ras['esito_pcr'] == 'POSITIVO')
+			$htmlClass='row_pos';
+		else if($ras['esito_pcr'] == 'NEGATIVO')
+			$htmlClass='row_neg';
+		else if($ras['esito_pcr'] == 'RIPETERE ESTRAZIONE')
+			$htmlClass='row_rep_ext';
+		else if($ras['esito_pcr'] == 'RIPETERE PCR')
+			$htmlClass='row_rep_pcr';
+		else if($ras['esito_pcr'] == 'RIPETERE TAMPONE')
+			$htmlClass='row_rep_tamp';
+		$ras['htmlClass'] = $htmlClass;
 		$PCRs[] = $ras;
 	}
 
@@ -77,6 +91,8 @@ if (isSet($_GET['barcode']) || isSet($_POST['barcode']))
 elseif (isSet($_GET['plate']))
 {
 	$plate = $_GET['plate'];
+
+
 
 	$res = mysql_query("SELECT * FROM samples WHERE barcode IN (SELECT barcode FROM pcr_plates WHERE plate = '$plate') ");
 	$samples = array();
@@ -97,6 +113,19 @@ elseif (isSet($_GET['plate']))
 	$PCRs = array();
 	while ($ras = mysql_fetch_assoc($res))
 	{
+		if($ras['isControl'] == 1)
+			$htmlClass='row_ctrl';
+		else if($ras['esito_pcr'] == 'POSITIVO')
+			$htmlClass='row_pos';
+		else if($ras['esito_pcr'] == 'NEGATIVO')
+			$htmlClass='row_neg';
+		else if($ras['esito_pcr'] == 'RIPETERE ESTRAZIONE')
+			$htmlClass='row_rep_ext';
+		else if($ras['esito_pcr'] == 'RIPETERE PCR')
+			$htmlClass='row_rep_pcr';
+		else if($ras['esito_pcr'] == 'RIPETERE TAMPONE')
+			$htmlClass='row_rep_tamp';
+		$ras['htmlClass'] = $htmlClass;
 		$PCRs[] = $ras;
 	}
 
@@ -122,7 +151,22 @@ elseif (isSet($_POST['date']))
 	{
 		$ras['extractions'] = array();
 		$PCRs[$ras['barcode']] = $ras;
+
 		
+		if($ras['isControl'] == 1)
+			$htmlClass='row_ctrl';
+		else if($ras['esito_pcr'] == 'POSITIVO')
+			$htmlClass='row_pos';
+		else if($ras['esito_pcr'] == 'NEGATIVO')
+			$htmlClass='row_neg';
+		else if($ras['esito_pcr'] == 'RIPETERE ESTRAZIONE')
+			$htmlClass='row_rep_ext';
+		else if($ras['esito_pcr'] == 'RIPETERE PCR')
+			$htmlClass='row_rep_pcr';
+		else if($ras['esito_pcr'] == 'RIPETERE TAMPONE')
+			$htmlClass='row_rep_tamp';
+
+		$ras['htmlClass'] = $htmlClass;
 
 		if($ras['esito_pcr'] != 'CONTROLLO')
 		{
@@ -136,7 +180,9 @@ elseif (isSet($_POST['date']))
 	$res = mysql_query("SELECT * FROM estrazioni WHERE barcode IN (SELECT barcode FROM pcr_plates WHERE data_pcr = '$date') ");
 	while ($ras = mysql_fetch_assoc($res))
 	{
-		$PCRs[$ras['barcode']]['extractions'][] = $ras;
+
+		 $PCRs[$ras['barcode']]['extractions'][] = $ras;
+
 	}
 
 
