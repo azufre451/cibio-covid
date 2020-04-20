@@ -86,7 +86,7 @@ for analFile in glob.glob(args.data_folder+'/*.xls*'):
 
 			auto_result = row[16].value
 			final_result = row[19].value if row[19].value != 'NON REFERTARE' else row[18].value
-			if final_result not in ['POSITIVO','NEGATIVO','RIPETERE ESTRAZIONE','RIPETERE PCR']:
+			if final_result not in ['POSITIVO','NEGATIVO','RIPETERE ESTRAZIONE','RIPETERE PCR','RIPETERE TAMPONE']:
 				if is_control:
 					final_result = 'CONTROLLO'
 					auto_result = 'CONTROLLO'
