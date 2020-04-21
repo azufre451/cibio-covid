@@ -5,9 +5,11 @@ include('includes/app_include.php');
 
 include('includes/PHPTAL-1.3.0/PHPTAL.php');
 
+$searchType = 'bad';
 
 if (isSet($_GET['barcode']) || isSet($_POST['barcode']))
 {
+	$searchType = 'barcode';
 
 	if (isSet($_POST['barcode']))
 	{
@@ -90,6 +92,8 @@ if (isSet($_GET['barcode']) || isSet($_POST['barcode']))
 
 elseif (isSet($_GET['plate']))
 {
+	$searchType = 'plate';
+
 	$plate = $_GET['plate'];
 
 
@@ -141,6 +145,8 @@ elseif (isSet($_GET['plate']))
 
 elseif (isSet($_POST['date']))
 {
+	$searchType = 'date';
+
 	$date = $_POST['date']; 
 	$PCRs = array();       
 	$esitiTracker = array();
@@ -199,12 +205,34 @@ elseif (isSet($_POST['date']))
 
 
 
-	try 
-	{
-		echo $template->execute();
+	if (isSet($_GET['json']) || isSet($_POST['json'])) {
+		header('Content-type: application/json');
+		if ($searchType == 'barcode' || $searchType == 'plate') {
+			$output = json_encode([
+				'samples' => $samples,
+				'batches' => $batches,
+				'PCRs'    => $PCRs
+			]);
+	  } elseif ($searchType == 'date') {
+			$output = json_encode([
+				'PCRs'         => $PCRs,
+				'esitiTracker' => $esitiTracker
+			]);
+		} else {
+			$output = json_encode([
+				'error' => 'Bad criteria: "' . $searchType . '"'
+			]);
+		}
+	} else {
+	  try 
+	  {
+	  	$output = $template->execute();
+	  }
+	  	catch (Exception $e){
+			$output = $e;
+	  }
 	}
-		catch (Exception $e){
-	echo $e;
-	}
+
+	echo $output;
 
 ?>
