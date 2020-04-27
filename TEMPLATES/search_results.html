@@ -16,7 +16,7 @@
 		<p class="headerText"> Chiave di Ricerca: <span style="color:blue; font-weight:bold;"  tal:content="searchKey" /> </p>
  
 		
-		<p class="headerText">Layout Plate: <a style="font-size:14px;" href="javascript:void(0)" onclick="jQuery('#wellLayout').toggle();"> [ Nascondi / Mostra ] </a></p>
+		<p tal:condition="exists:wellLayout" class="headerText">Layout Plate: <a style="font-size:14px;" href="javascript:void(0)" onclick="jQuery('#wellLayout').toggle();"> [ Nascondi / Mostra ] </a></p>
 		<div id="wellLayout" tal:condition="exists:wellLayout">
 			<table class="legendTable">
 				<tr class="layoutRow">
@@ -38,7 +38,6 @@
 				<tr class="layoutRow" tal:repeat="layoutRow wellLayout">
 					<td class="intestRow" tal:content="repeat/layoutRow/key" />
 					<td tal:attributes="class layoutWell/0" tal:repeat="layoutWell layoutRow">
-						
 						<a tal:condition="exists:layoutWell/1/barcode" tal:attributes="href string:search.php?barcode=${layoutWell/1/barcode}" tal:content="layoutWell/1/barcode" />
 					</td>
 				</tr>

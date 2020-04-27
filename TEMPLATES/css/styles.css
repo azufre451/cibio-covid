@@ -7,7 +7,7 @@
 		border-bottom:1px solid #999;
 	}
 
-	.resultCell.red, tr.row_neg .fr, td.row_neg{ background-color: #eb837a; }
+	.resultCell.red, tr.row_neg .fr, td.row_neg{ background-color: #EB837A; }
 	.resultCell.green, tr.row_pos .fr, td.row_pos{ background-color: #a2f285; }
 	.resultCellYellow, tr.row_rep_pcr .fr, td.row_rep_pcr { background-color: #e0be58; }
 	tr.row_ctrl{ display:none; }
@@ -37,7 +37,7 @@
 
 
 
-	#wellLayout tr.layoutRow td { text-align:center; width:auto; padding:5px 10px;} 
+	#wellLayout tr.layoutRow td { text-align:center; width:60px; padding:5px 10px; border-bottom:1px solid #999; border-left:1px solid #999;} 
 
 	#wellLayout a {color:black;} 
 
