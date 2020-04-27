@@ -7,11 +7,11 @@ $db_Name = 'covid';
 $db_Port = 33006; 
 
 
-$db_Host = "localhost";
-$db_User = "debian-sys-maint";
-$db_Pass = "uvMB19ny5KOciZlt";
-$db_Name = 'covid';  
-$db_Port = 3306; 
+//$db_Host = "localhost";
+//$db_User = "debian-sys-maint";
+//$db_Pass = "uvMB19ny5KOciZlt";
+//$db_Name = 'covid';  
+//$db_Port = 3306; 
 
 function mysql_query($q){return Database::query($q);}
 function mysql_fetch_array($q){return mysqli_fetch_array($q);}
