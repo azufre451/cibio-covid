@@ -1,0 +1,46 @@
+.resultCell{
+		width:200px;
+		
+
+		font-size:18px;
+		background-color:#EEE;
+		border-bottom:1px solid #999;
+	}
+
+	.resultCell.red, tr.row_neg .fr, td.row_neg{ background-color: #eb837a; }
+	.resultCell.green, tr.row_pos .fr, td.row_pos{ background-color: #a2f285; }
+	.resultCellYellow, tr.row_rep_pcr .fr, td.row_rep_pcr { background-color: #e0be58; }
+	tr.row_ctrl{ display:none; }
+	tr.row_rep_ext .fr, td.row_rep_ext { background-color: #d3b0ff; }
+
+	tr.row_rep_tamp .fr, td.row_rep_tamp { background-color: #fc7f03 }
+	tr.row_error .fr, td.row_error { background-color: red; }
+
+
+	.intest{
+		background-color:#333;
+		color:white;
+		font-weight:bold;
+		font-weight:bold;
+		border-bottom:1px solid black;
+		text-align:center;
+	}
+	.headerText{
+		font-weight:bold;
+		font-size:19px;
+		border-bottom:1px solid #999;
+		width:90%;
+	}
+
+	#wellLayout table tr.intest td{font-weight:bold; border-bottom:2px solid black;}
+	#wellLayout table td.intestRow{font-weight:bold; width:auto; padding:5px 15px; background-color: #CCC; border-right:2px solid black;}
+
+
+
+	#wellLayout tr.layoutRow td { text-align:center; width:auto; padding:5px 10px;} 
+
+	#wellLayout a {color:black;} 
+
+	.legendTable td{ padding:5px 10px; border:1px solid #333; }
+
+	.legendTable td .inactive{ background-color:black !important; }	

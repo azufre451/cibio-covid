@@ -2,36 +2,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="it">
 	<head>
-		<style>
-			.resultCell{
-				width:200px;
-				
-
-				font-size:18px;
-				background-color:#EEE;
-				border-bottom:1px solid #999;
-			}
-
-			.resultCell.red, tr.row_neg .fr{ background-color: #eb837a; }
-			.resultCell.green, tr.row_pos .fr{ background-color: #a2f285; }
-			.resultCellYellow, tr.row_rep_pcr .fr { background-color: #e0be58; }
-			tr.row_ctrl{ display:none; }
-			tr.row_rep_ext .fr { background-color: #d3b0ff; }
-			.intest{
-				background-color:#333;
-				color:white;
-				font-weight:bold;
-				font-weight:bold;
-				border-bottom:1px solid black;
-				text-align:center;
-			}
-			.headerText{
-				font-weight:bold;
-				font-size:19px;
-				border-bottom:1px solid #999;
-				width:90%;
-			}
-		</style>
+		<link rel="stylesheet" type="text/css" href="TEMPLATES/css/styles.css" />
 		<script type="text/javascript" src="TEMPLATES/js/jquery.js" />
 		<script>
 			function filter(ida){
@@ -44,52 +15,99 @@
 
 		<p class="headerText"> Chiave di Ricerca: <span style="color:blue; font-weight:bold;"  tal:content="searchKey" /> </p>
  
-		
+		<div id="wellLayout" tal:condition="exists:wellLayout">
+			<p class="headerText">Layout Plate:</p>
 
-		<p class="headerText">Campioni associati alla ricerca:</p>
-		<table>
-			<tr class="intest"><td> Barcode </td> <td> Data di accettazione </td> <td> Batch di accettazione </td></tr>
-			<tr tal:repeat="batch batches">
-				<td class="resultCell" tal:content="batch/barcode"/>
-				<td class="resultCell" tal:content="batch/data_estrazione">
-					<span  tal:content="php:(samples[batch['barcode']]['data_accettazione'])"/>
-				</td>
-				<td class="resultCell" tal:content="batch/batch"/>
-			</tr>
-		</table>
-
-
-		<p class="headerText">Esito PCR:</p>
-
-		Visualizza solo campioni con esito finale
-		<input type="checkbox" id="filter_positivi" checked="checked"  onchange="javascript:filter('neg');" label="Negativo">  </input>Negativo
-		<input type="checkbox" id="filter_positivi"  checked="checked" onchange="javascript:filter('pos');" label="Positivo" >  </input>Positivo
-		<input type="checkbox" id="filter_positivi"  checked="checked" onchange="javascript:filter('rep_pcr');" label="Ripetere PCR" >  </input>Ripeti PCR
-		<input type="checkbox" id="filter_positivi"  checked="checked" onchange="javascript:filter('rep_ext');" value="Ripetere Estrazione" > </input> Ripeti Estrazione 
-
-		<input type="checkbox" id="filter_positivi"  checked="checked" onchange="javascript:filter('rep_tamp');" value="Ripetere Tampone" > </input> Ripeti Tampone 
-
-		<input type="checkbox" id="filter_controllo"  onchange="javascript:filter('ctrl');" value="Pozzetti controllo" > </input> Pozzetti Controllo
+			<table class="legendTable">
+				<tr class="layoutRow">
+					<td style="border:0px;"> Legenda </td>
+					<td class="row_pos">POSITIVO</td>
+					<td class="row_neg">NEGATIVO</td>
+					<td class="row_rep_pcr">RIP. PCR</td>
+					<td class="row_rep_ext">RIP. ESTR.</td>
+					<td class="row_rep_tamp">RIP. TAMP.</td>
+					<td class="row_error">ERRORE</td>
+				</tr>
+			</table>
 
 
 
-		<table>
-			<tr class="intest"> <td> Data PCR </td> <td> Plate </td>  <td> Barcode </td>  <td> Well</td>  <td> Cy5</td> <td> FAM</td> <td> HEX</td>   <td> Esito PCR (Automatico) </td> <td> Esito PCR (Operatore) </td></tr>
-			<tr tal:attributes="class pcr/htmlClass" tal:repeat="pcr PCRs">
-				<td class="resultCell" style="width:120px" tal:content="pcr/data_pcr"/>
-				<td class="resultCell" style="width:120px"><a tal:attributes="href string:search.php?plate=${pcr/plate}" ><span tal:content="php:substr(pcr['plate'],0,strlen(pcr['plate'])-2)" /><span style="font-size:21px; font-weight:bold;" tal:content="php:substr(pcr['plate'],strlen(pcr['plate'])-2)" /></a></td>
-				<td class="resultCell" style="width:120px" ><a tal:attributes="href string:search.php?barcode=${pcr/barcode}" tal:content="pcr/barcode" /></td>
-				<td class="resultCell" style="width:100px; text-align:center" tal:content="pcr/well"/>
-				
-				<td class="resultCell" style="width:80px; text-align:center" tal:content="pcr/Cy5"/>
-				<td class="resultCell" style="width:80px; text-align:center" tal:content="pcr/FAM"/>
-				<td class="resultCell" style="width:80px; text-align:center" tal:content="pcr/HEX"/>
 
-				<td tal:attributes="class php: (pcr['esito_automatico'] == 'NEGATIVO') ? 'resultCell red' : 'resultCell green'" class="resultCell" style="width:130px; text-align:center" tal:content="pcr/esito_automatico"/>
-				<td class="resultCell fr" style="width:130px; text-align:center" tal:content="pcr/esito_pcr"/>
+			<table style="margin-top:15px;">
+				<tr class="intest"><td/><td tal:repeat="n php:range(1,12)" tal:content="n" /></tr>
+				<tr class="layoutRow" tal:repeat="layoutRow wellLayout">
+					<td class="intestRow" tal:content="repeat/layoutRow/key" />
+					<td tal:attributes="class layoutWell/0" tal:repeat="layoutWell layoutRow">
+						
+						<a tal:attributes="href string:search.php?barcode=${layoutWell/1/barcode}" tal:content="layoutWell/1/barcode" />
+					</td>
+				</tr>
+			</table>
+		</div>
 
-			</tr>
-		</table>
 
+		<div id="samplesLayout">
+			<p class="headerText">Campioni associati alla ricerca:</p>
+			<table>
+				<tr class="intest"><td> Barcode </td> <td> Data di accettazione </td> <td> Batch di accettazione </td></tr>
+				<tr tal:repeat="batch batches">
+					<td class="resultCell" tal:content="batch/barcode"/>
+					<td class="resultCell" tal:content="batch/data_estrazione">
+						<span  tal:content="php:(samples[batch['barcode']]['data_accettazione'])"/>
+					</td>
+					<td class="resultCell" tal:content="batch/batch"/>
+				</tr>
+			</table>
+		</div>
+
+		<div id="PCRLayout">
+
+			<p class="headerText">Esito PCR:</p>
+
+
+			<table class="legendTable">
+				<tr class="layoutRow">
+					<td style="border:0px;" class="intest"> Legenda </td>
+					<td class="row_pos">POSITIVO</td>
+					<td class="row_neg">NEGATIVO</td>
+					<td class="row_rep_pcr">RIP. PCR</td>
+					<td class="row_rep_ext">RIP. ESTR.</td>
+					<td class="row_rep_tamp">RIP. TAMP.</td>
+					<td class="row_error">ERRORE</td>
+				</tr>
+			</table>
+
+			<div style="margin-top:15px;">
+				Visualizza solo campioni con esito finale
+				<input type="checkbox" id="filter_positivi" checked="checked"  onchange="javascript:filter('neg');" label="Negativo">  </input>Negativo
+				<input type="checkbox" id="filter_positivi"  checked="checked" onchange="javascript:filter('pos');" label="Positivo" >  </input>Positivo
+				<input type="checkbox" id="filter_positivi"  checked="checked" onchange="javascript:filter('rep_pcr');" label="Ripetere PCR" >  </input>Ripeti PCR
+				<input type="checkbox" id="filter_positivi"  checked="checked" onchange="javascript:filter('rep_ext');" value="Ripetere Estrazione" > </input> Ripeti Estrazione 
+
+				<input type="checkbox" id="filter_positivi"  checked="checked" onchange="javascript:filter('rep_tamp');" value="Ripetere Tampone" > </input> Ripeti Tampone 
+
+				<input type="checkbox" id="filter_controllo"  onchange="javascript:filter('ctrl');" value="Pozzetti controllo" > </input> Pozzetti Controllo
+			</div>
+
+
+
+			<table>
+				<tr class="intest"> <td> Data PCR </td> <td> Plate </td>  <td> Barcode </td>  <td> Well</td>  <td> Cy5</td> <td> FAM</td> <td> HEX</td>   <td> Esito PCR (Automatico) </td> <td> Esito PCR (Operatore) </td></tr>
+				<tr tal:attributes="class pcr/htmlClass" tal:repeat="pcr PCRs">
+					<td class="resultCell" style="width:120px" tal:content="pcr/data_pcr"/>
+					<td class="resultCell" style="width:120px"><a tal:attributes="href string:search.php?plate=${pcr/plate}" ><span tal:content="php:substr(pcr['plate'],0,strlen(pcr['plate'])-2)" /><span style="font-size:21px; font-weight:bold;" tal:content="php:substr(pcr['plate'],strlen(pcr['plate'])-2)" /></a></td>
+					<td class="resultCell" style="width:120px" ><a tal:attributes="href string:search.php?barcode=${pcr/barcode}" tal:content="pcr/barcode" /></td>
+					<td class="resultCell" style="width:100px; text-align:center" tal:content="pcr/well"/>
+					
+					<td class="resultCell" style="width:80px; text-align:center" tal:content="pcr/Cy5"/>
+					<td class="resultCell" style="width:80px; text-align:center" tal:content="pcr/FAM"/>
+					<td class="resultCell" style="width:80px; text-align:center" tal:content="pcr/HEX"/>
+
+					<td tal:attributes="class php: (pcr['esito_automatico'] == 'NEGATIVO') ? 'resultCell red' : 'resultCell green'" class="resultCell" style="width:130px; text-align:center" tal:content="pcr/esito_automatico"/>
+					<td class="resultCell fr" style="width:130px; text-align:center" tal:content="pcr/esito_pcr"/>
+
+				</tr>
+			</table>
+		</div>
 	</body>
 </html>
