@@ -123,7 +123,7 @@ elseif (isSet($_GET['plate']))
 		$wellLayout[chr($k+65)] = array();
 		
 		foreach(range(1,12) as $i)
-			$wellLayout[chr($k+65)][sprintf("%02d", $i)  ] = array();
+			$wellLayout[chr($k+65)][sprintf("%02d", $i)  ] = array('',array());
 
 	}	
 
