@@ -20,8 +20,14 @@ def na2none(a):
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_folder', help='his is the folder containing all the Analisi Excell files. One file per plate.', required=True)
-parser.add_argument('--well_avoid', default=['H01','A01','A02','A05','A08','A12'], nargs='+')
-parser.add_argument('--well_allow', default=[], nargs='+')
+parser.add_argument('--control_wells', help="manual setup for control wells in the plate (list, space separated. Esample: A01 A02 A03 ...)", default=[], nargs='+')
+
+parser.add_argument('--kf', action='store_true',help='Equals to --control_wells A01 A02 A12 D04 D08')
+parser.add_argument('--old_plates', action='store_true',help='Equals to --control_wells H01 A01 A02 A05 A08 A12')
+
+
+
+parser.add_argument('--well_allow', default=[], nargs='+', help="Allows to override the plate setup to include a sample in an otherwise 'control' well")
 parser.add_argument('--platename_from_file',action='store_true', help='allows to take the Plate Name from the filename, instead thatn from the designated cell in the template')
 
 
@@ -29,12 +35,19 @@ parser.add_argument('--platename_from_file',action='store_true', help='allows to
 
 args = parser.parse_args()
 
-control_samples = ['NTC','PK','PE','BE','55555','77777','11111111','33333','20202020','25252525','27272727']
-WellsToAvoid = [_ for _ in list(args.well_avoid) if _ not in list(args.well_allow)]
+control_samples = ['NTC','PK','PE','BE','55555','77777','11111111','33333','20202020','25252525','27272727', 'pcr NEG','pcr POS']
 
+if args.kf:
+	ListOfControlWells=['A01','A02','A12','D04','D08']
+elif args.old_plates:
+	ListOfControlWells=['H01','A01','A02','A05','A08','A12']
+else:
+	ListOfControlWells=list(args.control_wells)
 
+WellsToAvoid = [_ for _ in ListOfControlWells if _ not in list(args.well_allow)]
 
 print("Skipping wells: ",' '.join(WellsToAvoid))
+
 mydb = mysql.connector.connect(
   host="colab1.cibio.unitn.it",
   user="covid_user",
@@ -65,7 +78,7 @@ for analFile in glob.glob(args.data_folder+'/*.xls*'):
 		print("Open", analFile,plateName)
 		if plateName == 'XXXy' and analFile == 'Analisi/200408/V220040801_analisi.xlsx': plateName = 'V220040801'
 	else:
-		plateName = os.path.basename(analFile).replace('_analisi.xlsx','')
+		plateName = os.path.basename(analFile).replace('_analisi.xlsm','')
 
 	plateDate= '20'+plateName[2:4]+'-'+plateName[4:6]+'-'+plateName[6:8]
 
