@@ -41,30 +41,34 @@
 
 		<table>
 			<tr class="intest"> <td> Data PCR </td> <td> Plate </td>  <td> Barcode </td>  <td> Well</td>  <td> Cy5</td> <td> FAM</td> <td> HEX</td>   <td> Esito PCR (Auto) </td> <td> Esito PCR (Finale) </td></tr>
-			<tr tal:attributes="class pcr/htmlClass" tal:repeat="pcr PCRs">
-				<td class="resultCell" style="width:120px" tal:content="pcr/data_pcr"/>
-				<td class="resultCell" style="width:120px"><a tal:attributes="href string:search.php?plate=${pcr/plate}" ><span tal:content="php:substr(pcr['plate'],0,strlen(pcr['plate'])-2)" /><span style="font-size:21px; font-weight:bold;" tal:content="php:substr(pcr['plate'],strlen(pcr['plate'])-2)" /></a></td>
-				<td class="resultCell" style="width:120px" ><a tal:attributes="href string:search.php?barcode=${pcr/barcode}" tal:content="pcr/barcode" /></td>
-				<td class="resultCell" style="width:100px; text-align:center" tal:content="pcr/well"/>
-				
-				<td class="resultCell" style="width:80px; text-align:center" tal:content="pcr/Cy5"/>
-				<td class="resultCell" style="width:80px; text-align:center" tal:content="pcr/FAM"/>
-				<td class="resultCell" style="width:80px; text-align:center" tal:content="pcr/HEX"/>
+			<tbody tal:repeat="pcrgroup PCRs">
+				<tr tal:attributes="class pcr/htmlClass" tal:repeat="pcr pcrgroup">
+					<td class="resultCell" style="width:120px" tal:content="pcr/data_pcr"/>
+					<td class="resultCell" style="width:120px"><a tal:attributes="href string:search.php?plate=${pcr/plate}" ><span tal:content="php:substr(pcr['plate'],0,strlen(pcr['plate'])-2)" /><span style="font-size:21px; font-weight:bold;" tal:content="php:substr(pcr['plate'],strlen(pcr['plate'])-2)" /></a></td>
+					<td class="resultCell" style="width:120px" ><a tal:attributes="href string:search.php?barcode=${pcr/barcode}" tal:content="pcr/barcode" /></td>
+					<td class="resultCell" style="width:100px; text-align:center" tal:content="pcr/well"/>
+					
+					<td class="resultCell" style="width:80px; text-align:center" tal:content="pcr/Cy5"/>
+					<td class="resultCell" style="width:80px; text-align:center" tal:content="pcr/FAM"/>
+					<td class="resultCell" style="width:80px; text-align:center" tal:content="pcr/HEX"/>
 
-				<td tal:attributes="class php: (pcr['esito_automatico'] == 'NEGATIVO') ? 'resultCell red' : 'resultCell green'" class="resultCell" style="width:130px; text-align:center" tal:content="pcr/esito_automatico"/>
-				<td class="resultCell fr" style="width:130px; text-align:center" tal:content="pcr/esito_pcr"/>
-				<tr tal:attributes="class pcr/htmlClass" >
-					<td class="intest" colspan="7"></td>
-					<td class="intest">Estrazione</td>
-					<td class="intest">Batch</td>
-				</tr>
-				<tr tal:attributes="class pcr/htmlClass" tal:repeat="extraction pcr/extractions">
-					<td colspan="7"></td>
-					<td style="border-bottom:1px solid #999;" tal:content="extraction/data_estrazione">test</td>
-					<td style="border-bottom:1px solid #999;" tal:content="extraction/batch">test</td>
-				</tr>
-				<tr tal:attributes="class pcr/htmlClass"  style="height:20px;"><td></td></tr>
-			</tr>
+					<td tal:attributes="class php: (pcr['esito_automatico'] == 'NEGATIVO') ? 'resultCell red' : 'resultCell green'" class="resultCell" style="width:130px; text-align:center" tal:content="pcr/esito_automatico"/>
+					<td class="resultCell fr" style="width:130px; text-align:center" tal:content="pcr/esito_pcr"/>
+					<!--
+					<tr tal:attributes="class pcr/htmlClass" >
+						<td class="intest" colspan="7"></td>
+						<td class="intest">Estrazione</td>
+						<td class="intest">Batch</td>
+					</tr>
+					<tr tal:attributes="class pcr/htmlClass" tal:repeat="extraction pcr/extractions">
+						<td colspan="7"></td>
+						<td style="border-bottom:1px solid #999;" tal:content="extraction/data_estrazione">test</td>
+						<td style="border-bottom:1px solid #999;" tal:content="extraction/batch">test</td>
+					</tr>
+					<tr tal:attributes="class pcr/htmlClass"  style="height:20px;"><td></td></tr>
+					-->
+					</tr>
+			</tbody>
 		</table>
 
 	</body>

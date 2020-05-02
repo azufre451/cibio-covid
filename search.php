@@ -216,6 +216,7 @@ elseif (isSet($_POST['date']))
 			$htmlClass='row_rep_tamp';
 		else if($ras['esito_pcr'] == 'ERRORE COMPILAZIONE')
 			$htmlClass='row_error';
+		else $htmlClass='';
 		$ras['htmlClass'] = $htmlClass;
 
 		if($ras['esito_pcr'] != 'CONTROLLO')
@@ -226,19 +227,24 @@ elseif (isSet($_POST['date']))
 				$esitiTracker[$ras['esito_pcr']] += 1;
 		}
 
-		$PCRs[$ras['barcode']] = $ras;
+		if(!array_key_exists($ras['barcode'], $PCRs))
+			$PCRs[$ras['barcode']] = array();	
+		$PCRs[$ras['barcode']][] = $ras;
 	}
-
+/*
 	$res = mysql_query("SELECT * FROM estrazioni WHERE barcode IN (SELECT barcode FROM pcr_plates WHERE data_pcr = '$date') ");
 	while ($ras = mysql_fetch_assoc($res))
 	{
 
-		 $PCRs[$ras['barcode']]['extractions'][] = $ras;
+
+
+		 foreach ( $PCRs[$ras['barcode']] as $bc=>$bca)
+		 	$bca['extractions'][] = $ras;
 
 	}
+*/
 
-
-	 
+	
 	$template = new PHPTAL('TEMPLATES/search_results_pcr.html');
 	$template->searchKey = 'Data di PCR :: '. $date;
 	$template->PCRs = $PCRs;
