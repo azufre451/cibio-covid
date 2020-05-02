@@ -20,7 +20,8 @@ def na2none(a):
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_folder', help='his is the folder containing all the Analisi Excell files. One file per plate.', required=True)
-parser.add_argument('--well_avoid', default=[], nargs='+')
+parser.add_argument('--well_avoid', default=['H01','A01','A02','A05','A08','A12'], nargs='+')
+parser.add_argument('--well_allow', default=[], nargs='+')
 parser.add_argument('--platename_from_file',action='store_true', help='allows to take the Plate Name from the filename, instead thatn from the designated cell in the template')
 
 
@@ -28,8 +29,9 @@ parser.add_argument('--platename_from_file',action='store_true', help='allows to
 
 args = parser.parse_args()
 
-control_wells = ['NTC','PK','PE','55555','77777','11111111',]
-WellsToAvoid = list(args.well_avoid)
+control_samples = ['NTC','PK','PE','BE','55555','77777','11111111','33333','20202020','25252525','27272727']
+WellsToAvoid = [_ for _ in list(args.well_avoid) if _ not in list(args.well_allow)]
+
 
 
 print("Skipping wells: ",' '.join(WellsToAvoid))
@@ -72,7 +74,7 @@ for analFile in glob.glob(args.data_folder+'/*.xls*'):
 			well= str(row[1].value)
 			target= str(row[3].value)
 			barcode= str(row[5].value)
-			is_control= int(barcode in control_wells or well in ['H01','A01','A02','A05','A08','A12'])
+			is_control= int(barcode in control_samples or well in WellsToAvoid)
 
 
 
@@ -93,12 +95,14 @@ for analFile in glob.glob(args.data_folder+'/*.xls*'):
 				else:
 					final_result = 'ERRORE COMPILAZIONE'
 
-			if well not in WellsToAvoid and str (barcode) != "0":
+
+			if str (barcode) != "0":
 				#print(litref,cts,val_cy5,val_fam,val_hex)
 				sql = 'SELECT 1 FROM samples WHERE barcode = %s'
 				mycursor.execute(sql, (barcode,))
 				mycursor.fetchone()
 				if(mycursor.rowcount > 0):
+						print(well,barcode)
 						#print("OK", plateName,barcode,well,val_cy5,val_fam,val_hex,auto_result,final_result )
 						samplesToAdd.append ( (plateName, plateDate,barcode,well,val_cy5,val_fam,val_hex,auto_result,final_result, is_control))
 

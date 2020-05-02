@@ -25,18 +25,19 @@ samplesToAdd=[]
 
 for extratcionsFile in glob.glob(args.extr_folder+'/*.xls*'):
 	wb_obj = openpyxl.load_workbook(extratcionsFile,data_only=True,read_only=True) 
-	sheet = wb_obj.active
+	#sheet = wb_obj.active
+	sheet = wb_obj["Accettazione"] if "Accettazione" in wb_obj else wb_obj.active
 
 	print(extratcionsFile,sheet.max_row, "rows", sheet.max_column, "cols")
 
-
+	print(sheet["B2"].value.split('_'))
 	batchName= sheet["B2"].value.split('_')[0]
 	batchDate= sheet["B2"].value.split('_')[1]
 
 	realDate = '20'+batchDate[0:2]+'-'+batchDate[2:4]+'-'+batchDate[4:6]
 
 
-	for e in range(7,31):
+	for e in range(7,310):
 		if sheet["B"+str(e)].value is not None:
 			barcode= str(sheet["B"+str(e)].value)[0:8]
 
