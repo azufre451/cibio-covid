@@ -76,6 +76,8 @@ if (isSet($_GET['barcode']) || isSet($_POST['barcode']))
 			$htmlClass='row_rep_pcr';
 		else if($ras['esito_pcr'] == 'RIPETERE TAMPONE')
 			$htmlClass='row_rep_tamp';
+		else if($ras['esito_pcr'] == 'ERRORE COMPILAZIONE')
+			$htmlClass='row_error';
 		$ras['htmlClass'] = $htmlClass;
 		$PCRs[] = $ras;
 	}
@@ -114,9 +116,25 @@ elseif (isSet($_GET['plate']))
 	                                  
 
 	$res = mysql_query("SELECT * FROM pcr_plates WHERE plate = '$plate' ORDER BY barcode ASC");
-	$PCRs = array();
+	$wellLayout=array();
+
+	foreach(range(0,7) as $k)
+	{
+		$wellLayout[chr($k+65)] = array();
+		
+		foreach(range(1,12) as $i)
+			$wellLayout[chr($k+65)][sprintf("%02d", $i)  ] = array('',array());
+
+	}	
+
+
 	while ($ras = mysql_fetch_assoc($res))
 	{
+
+		#if (!array_key_exists($ras['well'], $wellLayout))
+
+
+
 		if($ras['isControl'] == 1)
 			$htmlClass='row_ctrl';
 		else if($ras['esito_pcr'] == 'POSITIVO')
@@ -129,16 +147,41 @@ elseif (isSet($_GET['plate']))
 			$htmlClass='row_rep_pcr';
 		else if($ras['esito_pcr'] == 'RIPETERE TAMPONE')
 			$htmlClass='row_rep_tamp';
+		else if($ras['esito_pcr'] == 'ERRORE COMPILAZIONE')
+			$htmlClass='row_error';
 		$ras['htmlClass'] = $htmlClass;
+
 		$PCRs[] = $ras;
+
+		$wellLetter = substr($ras['well'],0,1);
+		$wellNumber = (substr($ras['well'],1,2));
+
+		if (!array_key_exists($wellLetter, $wellLayout)) {echo "ERRORE!"; exit;}
+		$wellLayout[$wellLetter][$wellNumber] = array($htmlClass,$ras);
+
 	}
 
+
+	$od=array();
+	
+
+	ksort($wellLayout);
+	foreach($wellLayout as $k=>$v)
+	{
+		ksort($v);
+		$od[$k] = $v;
+	}
+	//print_r(array_keys($od)); exit;
+	
 	$template = new PHPTAL('TEMPLATES/search_results.html');
 	$template->searchKey = 'Plate di PCR :: '. $plate;
+
 
 	$template->samples = $samples;
 	$template->batches = $batches;
 	$template->PCRs = $PCRs;
+	$template->wellLayout = $od;
+//	print_r($od);exit;
 
 }
 
@@ -171,7 +214,9 @@ elseif (isSet($_POST['date']))
 			$htmlClass='row_rep_pcr';
 		else if($ras['esito_pcr'] == 'RIPETERE TAMPONE')
 			$htmlClass='row_rep_tamp';
-
+		else if($ras['esito_pcr'] == 'ERRORE COMPILAZIONE')
+			$htmlClass='row_error';
+		else $htmlClass='';
 		$ras['htmlClass'] = $htmlClass;
 
 		if($ras['esito_pcr'] != 'CONTROLLO')
@@ -182,19 +227,24 @@ elseif (isSet($_POST['date']))
 				$esitiTracker[$ras['esito_pcr']] += 1;
 		}
 
-		$PCRs[$ras['barcode']] = $ras;
+		if(!array_key_exists($ras['barcode'], $PCRs))
+			$PCRs[$ras['barcode']] = array();	
+		$PCRs[$ras['barcode']][] = $ras;
 	}
-
+/*
 	$res = mysql_query("SELECT * FROM estrazioni WHERE barcode IN (SELECT barcode FROM pcr_plates WHERE data_pcr = '$date') ");
 	while ($ras = mysql_fetch_assoc($res))
 	{
 
-		 $PCRs[$ras['barcode']]['extractions'][] = $ras;
+
+
+		 foreach ( $PCRs[$ras['barcode']] as $bc=>$bca)
+		 	$bca['extractions'][] = $ras;
 
 	}
+*/
 
-
-	 
+	
 	$template = new PHPTAL('TEMPLATES/search_results_pcr.html');
 	$template->searchKey = 'Data di PCR :: '. $date;
 	$template->PCRs = $PCRs;
