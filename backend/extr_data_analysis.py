@@ -12,10 +12,12 @@ setlocale(LC_NUMERIC,('it_IT','UTF-8'))
 
 
 def na2none(a):
+	
 	if a == 'N/A':
 		return None
 	else:
-		return float(atof(a))
+
+		return float(a)
 
 
 parser = argparse.ArgumentParser()
@@ -67,14 +69,14 @@ for analFile in glob.glob(args.data_folder+'/*.xls*'):
 	wb_obj = openpyxl.load_workbook(analFile,data_only=True, read_only=True)
 
 	try:
-		sheet = wb_obj["Data"]
+		sheet = wb_obj["analysis"]
 	except:
 		print("Error in finding Data tab", analFile )
 		sys.exit(0)
 
 
 	if not args.platename_from_file:
-		plateName= sheet["A2"].value
+		plateName= sheet["C2"].value
 		print("Open", analFile,plateName)
 		if plateName == 'XXXy' and analFile == 'Analisi/200408/V220040801_analisi.xlsx': plateName = 'V220040801'
 	else:
@@ -82,56 +84,71 @@ for analFile in glob.glob(args.data_folder+'/*.xls*'):
 
 	plateDate= '20'+plateName[2:4]+'-'+plateName[4:6]+'-'+plateName[6:8]
 
+	fline=True
 	for row in sheet.iter_rows():
-		if row[2].value == 'Cy5':
-			well= str(row[1].value)
-			target= str(row[3].value)
-			barcode= str(row[5].value)
-			is_control= int(barcode in control_samples or well in WellsToAvoid)
+		if fline:
+			fline=False
+			continue
+
+		well= str(row[1].value)
+			#target= str(row[3].value)
+		barcode= str(row[3].value)
+		isempty= int(row[8].value)
+		is_control= int(barcode in control_samples or well in WellsToAvoid)
+		batch_kf=str(row[4].value)
+
+
+		#litref= row[9].value
+		#cts= row[10].value[1:-1].split(';')
+
+		
+
+		val_cy5 = na2none(row[5].value)
+		val_fam = na2none(row[6].value)
+		val_hex = na2none(row[7].value)
 
 
 
-			litref= row[9].value
-			cts= row[10].value[1:-1].split(';')
+		auto_result = row[12].value
 
+		final_result = row[17].value if row[17].value != 'NON REFERTARE' else row[14].value
 
+		if final_result not in ['POSITIVO','NEGATIVO','RIPETERE ESTRAZIONE','RIPETERE PCR','RIPETERE TAMPONE']:
+			if is_control:
+				final_result = 'CONTROLLO'
+				auto_result = 'CONTROLLO'
+			else:
+				final_result = 'ERRORE COMPILAZIONE'
 
-			val_cy5,val_fam,val_hex = map(na2none,cts)
+		if str (barcode) != "0" and barcode != 'None' and  not isempty:
 
-
-			auto_result = row[16].value
-			final_result = row[19].value if row[19].value != 'NON REFERTARE' else row[18].value
-			if final_result not in ['POSITIVO','NEGATIVO','RIPETERE ESTRAZIONE','RIPETERE PCR','RIPETERE TAMPONE']:
-				if is_control:
-					final_result = 'CONTROLLO'
-					auto_result = 'CONTROLLO'
-				else:
-					final_result = 'ERRORE COMPILAZIONE'
-
-
-			if str (barcode) != "0":
-				#print(litref,cts,val_cy5,val_fam,val_hex)
-				sql = 'SELECT 1 FROM samples WHERE barcode = %s'
-				mycursor.execute(sql, (barcode,))
-				mycursor.fetchone()
-				if(mycursor.rowcount > 0):
-						print(well,barcode)
+			
+			sql = 'SELECT 1 FROM samples WHERE barcode = %s'
+			mycursor.execute(sql, (barcode,))
+			mycursor.fetchone()
+			if(mycursor.rowcount > 0):
+				print(well,barcode)
 						#print("OK", plateName,barcode,well,val_cy5,val_fam,val_hex,auto_result,final_result )
-						samplesToAdd.append ( (plateName, plateDate,barcode,well,val_cy5,val_fam,val_hex,auto_result,final_result, is_control))
+				samplesToAdd.append ( (plateName, plateDate,barcode,well,val_cy5,val_fam,val_hex,auto_result,final_result, is_control,batch_kf))
 
-				else:
-					if str(barcode) != "0":
-						samplesToCheck.append( (plateName, plateDate,barcode,well,val_cy5,val_fam,val_hex,auto_result,final_result, is_control))
+			else:
+				
+				if str(barcode) != "0":
+					samplesToCheck.append( (plateName, plateDate,barcode,well,val_cy5,val_fam,val_hex,auto_result,final_result, is_control))
 
+			#if final_result not in ['POSITIVO','NEGATIVO','RIPETERE ESTRAZIONE','RIPETERE PCR','RIPETERE TAMPONE']:
+				#print("NOK")
 
 
 print("Samples to Check: ",len(samplesToCheck))
 for k in samplesToCheck:
 	print(k)
 
-print("Samples to add: ",len(samplesToAdd))
+#print("Samples to add: ",len(samplesToAdd))
+#for k in samplesToAdd:
+#	print(k)
 
-sql = 'INSERT IGNORE INTO pcr_plates (plate, data_pcr, barcode, well, Cy5, FAM, HEX, esito_automatico, esito_pcr, isControl) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
+sql = 'INSERT IGNORE INTO pcr_plates (plate, data_pcr, barcode, well, Cy5, FAM, HEX, esito_automatico, esito_pcr, isControl,batch_kf) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
 #print(sql)
 mycursor.executemany(sql, samplesToAdd)
 
