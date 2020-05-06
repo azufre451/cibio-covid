@@ -1,0 +1,36 @@
+<!DOCTYPE html> 
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="it">
+	<head>
+		<script type="text/javascript" src="TEMPLATES/js/jquery.js"> </script>
+		<link rel="stylesheet" type="text/css" href="TEMPLATES/css/styles.css?v=${appVersion}" />
+		<script type="text/javascript" src="TEMPLATES/js/ajax_search.js?v=${appVersion}"> </script>
+		<script type="text/javascript" src="TEMPLATES/js/barcode128.js?v=${appVersion}"> </script>
+ 
+	</head>
+	<body>
+		<div style="margin:auto; width:30%;"><input id='search_barcode' style="width:100%; border:0px; font-size:15px; padding:5px; text-align:center; border-bottom:1px solid red;" placeholder = 'Scan or type your barcode here' autofocus="" /></div>
+		<div id = "query_container">
+			<div id = "barcode_query"><label>Valore inserito:</label> <svg id="barcode" style="vertical-align:middle;"></svg></div>
+			
+			<div id = "barcode_result"></div>
+		</div>
+		<!--<img id = "spinner" style="display:none" src = "TEMPLATES/img/spinner.gif" />-->
+		
+		<div style="position:absolute; bottom:20px; width:100%; ">
+		<div id="track_POSITIVO" class="trackerDiv">
+			<p class="resultCell green"  style="text-align:center; width:auto;">Positivi</p>
+			<textarea readonly="readonly" />
+		</div>
+		
+		<div id="track_NEGATIVO" class="trackerDiv">
+			<p class="resultCell red" style="text-align:center; width:auto;">Negativi</p>
+			<textarea  readonly="readonly" />
+		</div>
+		 
+		
+		</div>
+			 
+		
+</body>
+</html>

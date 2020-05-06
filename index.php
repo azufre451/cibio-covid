@@ -5,7 +5,7 @@ include('includes/PHPTAL-1.3.0/PHPTAL.php');
 
 
 $template = new PHPTAL('TEMPLATES/index.htm');
-
+$template->appVersion = $appVersion;
 	try 
 	{
 		echo $template->execute();
@@ -13,5 +13,7 @@ $template = new PHPTAL('TEMPLATES/index.htm');
 		catch (Exception $e){
 	echo $e;
 	}
+	
+	
 
 ?>

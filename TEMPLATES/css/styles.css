@@ -7,11 +7,11 @@
 		border-bottom:1px solid #999;
 	}
 
-	.resultCell.red, tr.row_neg .fr, td.row_neg{ background-color: #EB837A; }
-	.resultCell.green, tr.row_pos .fr, td.row_pos{ background-color: #a2f285; }
-	.resultCellYellow, tr.row_rep_pcr .fr, td.row_rep_pcr { background-color: #e0be58; }
+	.resultCell.red, tr.row_neg .fr, td.row_neg,#barcode_result .row_neg { background-color: #EB837A; }
+	.resultCell.green, tr.row_pos .fr, td.row_pos,#barcode_result .row_pos{ background-color: #a2f285; }
+	.resultCellYellow, tr.row_rep_pcr .fr, td.row_rep_pcr,#barcode_result .row_rep_pcr { background-color: #e0be58; }
 	tr.row_ctrl{ display:none; }
-	tr.row_rep_ext .fr, td.row_rep_ext { background-color: #d3b0ff; }
+	tr.row_rep_ext .fr, td.row_rep_ext,#barcode_result .row_rep_ext { background-color: #d3b0ff; }
 
 	tr.row_rep_tamp .fr, td.row_rep_tamp { background-color: #fc7f03 }
 	tr.row_error .fr, td.row_error { background-color: red; }
@@ -44,3 +44,43 @@
 	.legendTable td{ padding:5px 10px; border:1px solid #333; }
 
 	.legendTable td .inactive{ background-color:black !important; }	
+
+ 
+
+#barcode_result .control_barcode, #barcode_result .no_result { background-color: #bbb; };
+			label {
+				font-weight: bold;
+			}
+			#query_container {
+				font-size: 4em;
+				text-align: center;
+			}
+			#barcode_query {
+				margin-top: 0.5em;
+				margin-bottom: 0.5em;
+			}
+			#spinner {
+				width: 5em;
+				display: block;
+				margin: 0 auto;
+			}
+			
+.trackerDiv{
+	width:45%;
+	margin-left:10px; 
+	float:left; 
+	padding:10px;
+}
+
+.trackerDiv p {
+	font-weight:bold;
+	text-transform:uppercase;
+	text-align:center;
+}
+.trackerDiv textarea {
+	width:99%;
+	margin:0px;
+	height:400px;
+	font-size:1.1em;
+	
+}

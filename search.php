@@ -11,6 +11,7 @@ if (isSet($_GET['barcode']) || isSet($_POST['barcode']))
 {
 	$searchType = 'barcode';
 
+
 	if (isSet($_POST['barcode']))
 	{
 		//echo "A";
@@ -29,8 +30,15 @@ if (isSet($_GET['barcode']) || isSet($_POST['barcode']))
 				$bcdLis[] = '0'.$elem;
 				$bcdLis[] = $elem.'01';
 				$bcdLis[] = '0'.$elem.'01';
+
 				$bcdLis[] = substr($elem,1,strlen($elem));
 				$bcdLis[] = substr($elem,1,strlen($elem)).'01';
+				
+				if (isSet($_GET['partialmatch']))
+				{
+					//barcode ending with 0x
+					$bcdLis[] = substr($elem,0,8);
+				}
 			}
 		}
 
@@ -249,10 +257,10 @@ elseif (isSet($_POST['date']))
 	$template->searchKey = 'Data di PCR :: '. $date;
 	$template->PCRs = $PCRs;
 	$template->esitiTracker=$esitiTracker;
-
+	
 }
 
-
+$template->appVersion = $appVersion;
 
 
 	if (isSet($_GET['json']) || isSet($_POST['json'])) {
@@ -284,5 +292,7 @@ elseif (isSet($_POST['date']))
 	}
 
 	echo $output;
+	
+	
 
 ?>
