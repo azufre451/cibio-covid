@@ -69,6 +69,7 @@
 	width:45%;
 	margin-left:10px; 
 	float:left; 
+	display:none;
 	padding:10px;
 }
 
@@ -83,4 +84,8 @@
 	height:400px;
 	font-size:1.1em;
 	
+}
+
+p.storicoTampone{
+	font-size:28px;
 }

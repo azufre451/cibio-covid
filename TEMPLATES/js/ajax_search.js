@@ -11,7 +11,10 @@ function notiEC(msg) {
 							if (last_pcr.isControl === "0") {
 								if (last_pcr.esito_pcr === 'POSITIVO' || last_pcr.esito_pcr === 'NEGATIVO')
 									jQuery('#track_'+last_pcr.esito_pcr+' textarea').append(last_pcr.barcode + '\r\n');
+									if(!jQuery('#track_'+last_pcr.esito_pcr).is(":visible"))
+										jQuery('#track_'+last_pcr.esito_pcr).fadeIn();
 								$result.html('<label>Esito tampone:</label> <span class="' + last_pcr.htmlClass + '">' + last_pcr.esito_pcr + '</span>');
+								$result.append('<p class="storicoTampone" ><a target="_blank" href="search.php?barcode='+last_pcr.barcode+'">Vedi storico tampone '+last_pcr.barcode+'</a></p>');
 							} else { 
 								$result.html('<span class="control_barcode">Inserito pozzetto di controllo!</span>');
 							}
@@ -50,6 +53,7 @@ jQuery(function()
 					
 						jQuery.ajax({
 							beforeSend: function(){$('#barcode_query #barcode').text(search_barcode);},
+
 							success: notiEC,
 							async:true,
 							type: 'POST',
