@@ -6,7 +6,7 @@ $db_Pass = "***REMOVED***";
 $db_Name = 'covid'; 
 $db_Port = 33006; 
 
-$appVersion = "1.0.4";
+$appVersion = "1.0.5.1";
 
 //$db_Host = "localhost";
 //$db_User = "debian-sys-maint";
