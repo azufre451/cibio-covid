@@ -11,6 +11,8 @@
 			}
 		</script>
 		<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+		
 	</head>
 	<body>
 
@@ -89,26 +91,122 @@
 
 			<table>
 				<tr class="intest"> <td> Data PCR </td> <td> Plate </td>  <td> Barcode </td> <td>Batch KF</td> <td> Well</td>  <td> Cy5</td> <td> FAM</td> <td> HEX</td>   <td> Esito PCR (Automatico) </td> <td> Esito PCR (Operatore) </td></tr>
-				<tr tal:attributes="class pcr/htmlClass" tal:repeat="pcr PCRs">
-					<td class="resultCell" style="width:120px" tal:content="pcr/data_pcr"/>
-					<td class="resultCell" style="width:120px"><a tal:attributes="href string:search.php?plate=${pcr/plate}" ><span tal:content="php:substr(pcr['plate'],0,strlen(pcr['plate'])-2)" /><span style="font-size:21px; font-weight:bold;" tal:content="php:substr(pcr['plate'],strlen(pcr['plate'])-2)" /></a></td>
-					<td class="resultCell" style="width:120px" ><a tal:attributes="href string:search.php?barcode=${pcr/barcode}" tal:content="pcr/barcode" /></td>
-					<td class="resultCell" style="width:100px; text-align:center" tal:content="pcr/batch_kf"/>
-					<td class="resultCell" style="width:100px; text-align:center" tal:content="pcr/well"/>
-					
-					<td class="resultCell" style="width:80px; text-align:center" tal:content="pcr/Cy5"/>
-					<td class="resultCell" style="width:80px; text-align:center" tal:content="pcr/FAM"/>
-					<td class="resultCell" style="width:80px; text-align:center" tal:content="pcr/HEX"/>
+				<tbody  tal:repeat="pcr PCRs"> 
+					<tr tal:attributes="class pcr/htmlClass" >
+						<td class="resultCell" style="width:120px" tal:content="pcr/data_pcr"/>
+						<td class="resultCell" style="width:120px"><a tal:attributes="href string:search.php?plate=${pcr/plate}" ><span tal:content="php:substr(pcr['plate'],0,strlen(pcr['plate'])-2)" /><span style="font-size:21px; font-weight:bold;" tal:content="php:substr(pcr['plate'],strlen(pcr['plate'])-2)" /></a></td>
+						<td class="resultCell" style="width:120px" ><a tal:attributes="href string:search.php?barcode=${pcr/barcode}" tal:content="pcr/barcode" /></td>
+						<td class="resultCell" style="width:100px; text-align:center" tal:content="pcr/batch_kf"/>
+						<td class="resultCell" style="width:100px; text-align:center" tal:content="pcr/well"/>
+						
+						<td class="resultCell" style="width:80px; text-align:center" tal:content="pcr/Cy5"/>
+						<td class="resultCell" style="width:80px; text-align:center" tal:content="pcr/FAM"/>
+						<td class="resultCell" style="width:80px; text-align:center" tal:content="pcr/HEX"/>
 
-					<td tal:attributes="class php: (pcr['esito_automatico'] == 'NEGATIVO') ? 'resultCell red' : 'resultCell green'" class="resultCell" style="width:130px; text-align:center" tal:content="pcr/esito_automatico"/>
-					<td class="resultCell fr" style="width:130px; text-align:center" tal:content="pcr/esito_pcr"/>
+						
 
-				</tr>
+						<td tal:attributes="class php: (pcr['esito_automatico'] == 'NEGATIVO') ? 'resultCell red' : 'resultCell green'" class="resultCell" style="width:130px; text-align:center" tal:content="pcr/esito_automatico"/>
+						<td class="resultCell fr" style="width:130px; text-align:center" tal:content="pcr/esito_pcr"/>
+
+					</tr>
+					<tr tal:condition="exists:pcr/curves" tal:attributes="class pcr/htmlClass" >
+						
+					<td colspan="10" style="background-color:#EEE">
+						
+						<div style="height:400px; margin:auto; width:900px; clear:both; margin-bottom:25px;" class="covid_chart">
+							<input  tal:repeat="curveDescriptor pcr/curves" class="curveDistribution" tal:attributes="id string:curve_${repeat/curveDescriptor/key} ; value curveDescriptor ; fluor repeat/curveDescriptor/key ; fluorcolor php:fluor2colors[repeat.curveDescriptor.key]" type="hidden" />
+							<input id="options_numfluor" tal:attributes="value php: ( pcr['kit'] == 'bosphore' ? 3 : 4)" type="hidden" />
+							<canvas class="cvcobject" tal:attributes="id string:chart_${pcr/plate}_${pcr/well}" ></canvas></div>
+					</td>
+					</tr>
+				</tbody>
 			</table>
 		</div>
 
 
 		
+		<script>
+
+
+ 
+		jQuery('.covid_chart').each(function(cvc){
+		
+			var ctx = jQuery('.cvcobject', this)[0].getContext('2d');
+			var dataGraph =  [{
+						data: Array(40).fill(50), 
+						borderColor: "#b71656",
+						type: 'line',
+						pointRadius: 0,
+						borderDash: [10,5],
+						fill: false
+				  	},{
+						label: 'Line Dataset',
+						data: Array(40).fill(100), 
+						borderColor: "#236ea7",
+						type: 'line',
+						pointRadius: 0,
+
+						borderDash: [10,5],
+						fill: false
+				 }];
+			
+
+			jQuery('.curveDistribution', this).each(function(e){
+				dataGraph.push(
+				{ 
+					data: jQuery(this).attr('value').split(','),
+					label: jQuery(this).attr('fluor'),
+					borderColor: jQuery(this).attr('fluorcolor'),
+
+					fill: false
+				});
+			});
+
+			var data = 
+
+			{
+				labels: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40],
+				datasets: dataGraph
+			};
+
+			window.myLineChart = new Chart(ctx,
+			{
+				type: 'line',
+				data: data,
+				options:
+				{
+					responsive:true,
+					maintainAspectRatio: false,
+					legend: 
+					{
+						labels:
+						{
+							filter: function(legendItem, chartData)
+							{
+								return (legendItem.datasetIndex > 1) 
+							}
+						}
+					},
+					scales:
+					{
+						xAxes: [{display: true}],
+						yAxes: [{
+							display: true,
+							type: 'logarithmic',
+							ticks: { 
+								min:10,
+
+								autoSkip: true,
+	        					maxTicksLimit: 20, 
+							 	callback: function(value, index, values){ return value;}
+							 	
+							}
+						}]
+					}
+				}
+			});
+		})
+		</script>
 
 	</body>
 

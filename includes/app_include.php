@@ -45,6 +45,12 @@ class Database
 }
 
 
+$fluor2colors=array(
+'FAM' => '#36a723',
+'HEX' => '#2e69d5',
+'Cy5' => '#b71656'
+);
+
 Database::tdbConnect($db_Host,$db_User, $db_Pass,$db_Name,$db_Port);
 Database::query('SET NAMES utf8');
 

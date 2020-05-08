@@ -72,6 +72,8 @@ if (isSet($_GET['barcode']) || isSet($_POST['barcode']))
 	while ($ras = mysql_fetch_assoc($res))
 	{
 
+		
+
 		if($ras['isControl'] == 1)
 			$htmlClass='row_ctrl';
 		else if($ras['esito_pcr'] == 'POSITIVO')
@@ -87,8 +89,18 @@ if (isSet($_GET['barcode']) || isSet($_POST['barcode']))
 		else if($ras['esito_pcr'] == 'ERRORE COMPILAZIONE')
 			$htmlClass='row_error';
 		$ras['htmlClass'] = $htmlClass;
+
+
+		$ras['curves']=array();
+		$curveRes = mysql_query("SELECT fluorophore,curve FROM curves WHERE plate = '".$ras['plate']."' AND well = '".$ras['well']."'");
+		while($curve = mysql_fetch_assoc($curveRes))
+		{
+			$ras['curves'][$curve['fluorophore']]=$curve['curve'];
+		}
 		$PCRs[] = $ras;
+
 	}
+
 
 	$template = new PHPTAL('TEMPLATES/search_results.html');
 	$template->searchKey = 'Barcode :: '. $bcdReadableList;
@@ -96,7 +108,7 @@ if (isSet($_GET['barcode']) || isSet($_POST['barcode']))
 	$template->samples = $samples;
 	$template->batches = $batches;
 	$template->PCRs = $PCRs;
-	//print_r($PCRs);
+	$template->fluor2colors=$fluor2colors;
 }
 
 
