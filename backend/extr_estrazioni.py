@@ -38,12 +38,13 @@ for extratcionsFile in glob.glob(args.extr_folder+'/*.xls*'):
 
 
 	for e in range(7,310):
+
 		if sheet["B"+str(e)].value is not None:
 			barcode= str(sheet["B"+str(e)].value)[0:8]
 
 		 
 			samplesToAdd.append( (barcode, realDate,batchName) )
-			print (extratcionsFile,barcode, realDate,batchName)
+			#print (extratcionsFile,barcode, realDate,batchName)
 
 
 for k in samplesToAdd:
@@ -55,8 +56,5 @@ mycursor.executemany(sql, samplesToAdd)
 
 sql = "INSERT IGNORE INTO samples (barcode, data_checkin) VALUES (%s, %s)"
 mycursor.executemany(sql, [(_[0],_[1]) for _ in samplesToAdd ] )
-
-
-
 
 mydb.commit()
