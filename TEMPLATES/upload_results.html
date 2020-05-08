@@ -1,0 +1,49 @@
+<html>
+<style>
+	.okMessage{
+		color:green;
+		font-weight:bold;
+		font-size:1.1em;
+	}
+	.errorMessage{
+		color:red;
+		font-weight:bold;
+		font-size:1.1em;
+	}
+	.emph{
+		color:#1b73c1;
+		font-weight: bold;
+		font-style: italic;
+	}
+</style>
+		<div style="padding:5px 20px; margin-top: 20px; width:50%; margin:auto; background-color:#e8d7a8; border: 1px solid #999;">
+		<p style="font-weight:bold;"> Da questo pannello puoi caricare i dati di Analisi ed Estrazioni </p>
+		<p> Per i file di analisi puoi caricare il file Excel salvato nella cartella estrazioni (per esempio <span class="emph">V220050808_analisi.xlsm</span>) </p>
+		<p> Per i file di estrazioni puoi caricare il file Excel salvato nella cartella estrazioni (per esempio <span class="emph">8_200508.xlsm</span>) </p>
+		<form action="load_data.php" method="POST" enctype="multipart/form-data">
+		<table>
+			<tr>
+					
+			  <td><b>Seleziona il File:</b> </td>
+			  <td> <input style="border:1px solid #444; padding:5px;" type="file" name="fileToUpload" id="fileToUpload"></input>
+			  </td>
+			</tr>
+			<tr>
+			  <td> <b>Cosa stai caricando:</b></td>
+			  	<td> <select style="border:1px solid #444; padding:5px;" name="uploadtype">
+			  	<option value="analisiBF">File di Analisi (KF - Bosphore)</option>
+			  	<option value="estrazioni">File di Estrazioni</option>
+			  </select></td>
+			</tr>
+			<tr>
+				<td />
+				<td> <input type="checkbox" name="replace" id="replace"/> Rimpiazza eventuali dati già inseriti <br/>per la stessa plate / lo stesso batch </td>
+			</tr>
+			 <tr> <td colspan="2" style="text-align:center"><input type="submit" style="font-size:20px;" value="- Carica il file -" name="submit"/> </td> </tr>
+		</table>
+		</form>
+		</div>
+
+
+
+</html>

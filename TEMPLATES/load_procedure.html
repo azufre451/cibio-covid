@@ -1,0 +1,31 @@
+<html>
+
+<style>
+	.okMessage{
+		color:green;
+		font-weight:bold;
+		font-size:1.1em;
+	}
+	.errorMessage{
+		color:red;
+		font-weight:bold;
+		font-size:1.1em;
+	}
+	.emph{
+		color:#1b73c1;
+		font-weight: bold;
+		font-style: italic;
+	}
+</style>
+
+<div style="width:70%; margin:auto; padding:15px; background-color: #CCC;">
+	<p style="font-size:1.1em; font-weight:bold;"> Esito caricamento file: <span class="emph" tal:content="loadedFile" /> </p>
+
+	<p style="font-family:monospace; margin-left:10px; border-left:3px solid #555; padding-left:10px; margin-top:10px;" tal:content="structure stdout" /><hr/>
+	<p style="font-family:monospace; margin-left:10px; border-left:3px solid red; padding-left:10px; margin-top:10px;" tal:content="structure stderr" />
+
+<a href="load_data.php"> Torna indietro al caricamento </a> <a tal:condition="exists:iplate" tal:attributes="href string:search.php?plate=${iplate}"> Visualizza la Plate appena inserita</a>
+
+</div>
+
+</html> 
