@@ -109,6 +109,8 @@ if (isSet($_GET['barcode']) || isSet($_POST['barcode']))
 	$template->batches = $batches;
 	$template->PCRs = $PCRs;
 	$template->fluor2colors=$fluor2colors;
+
+	
 }
 
 
@@ -273,6 +275,7 @@ elseif (isSet($_POST['date']))
 }
 
 $template->appVersion = $appVersion;
+$template->plotoptions = $plotOptions;
 
 
 	if (isSet($_GET['json']) || isSet($_POST['json'])) {

@@ -85,11 +85,13 @@
 				<input type="checkbox" id="filter_positivi"  checked="checked" onchange="javascript:filter('rep_tamp');" value="Ripetere Tampone" > </input> Ripeti Tampone 
 
 				<input type="checkbox" id="filter_controllo"  onchange="javascript:filter('ctrl');" value="Pozzetti controllo" > </input> Pozzetti Controllo
+
+				| <button id="scaleControl" onclick="javascript:tscale();">Scala Lineare</button>
 			</div>
 
 
 
-			<table>
+			<table style="margin-top:10px;">
 				<tr class="intest"> <td> Data PCR </td> <td> Plate </td>  <td> Barcode </td> <td>Batch KF</td> <td> Well</td>  <td> Cy5</td> <td> FAM</td> <td> HEX</td>   <td> Esito PCR (Automatico) </td> <td> Esito PCR (Operatore) </td></tr>
 				<tbody  tal:repeat="pcr PCRs"> 
 					<tr tal:attributes="class pcr/htmlClass" >
@@ -112,10 +114,15 @@
 					<tr tal:condition="exists:pcr/curves" tal:attributes="class pcr/htmlClass" >
 						
 					<td colspan="10" style="background-color:#EEE">
+
+						
 						
 						<div style="height:400px; margin:auto; width:900px; clear:both; margin-bottom:25px;" class="covid_chart">
-							<input  tal:repeat="curveDescriptor pcr/curves" class="curveDistribution" tal:attributes="id string:curve_${repeat/curveDescriptor/key} ; value curveDescriptor ; fluor repeat/curveDescriptor/key ; fluorcolor php:fluor2colors[repeat.curveDescriptor.key]" type="hidden" />
-							<input id="options_numfluor" tal:attributes="value php: ( pcr['kit'] == 'bosphore' ? 3 : 4)" type="hidden" />
+							<input tal:repeat="curveDescriptor pcr/curves" class="curveDistribution" tal:attributes="id string:curve_${repeat/curveDescriptor/key} ; value curveDescriptor ; fluor repeat/curveDescriptor/key ; fluorcolor php:fluor2colors[repeat.curveDescriptor.key]" type="hidden" />
+							<input class="plotoptions" tal:attributes="plotlabels php:plotoptions[pcr['kit']]['plotlabels'] ; max_pcr_cycles php:plotoptions[pcr['kit']]['max_pcr_cycles']" type="hidden" />
+
+							<input type="hidden" class="baseline" tal:repeat="baseline php:plotoptions[pcr['kit']]['plotBaseLines']" tal:attributes="value baseline/value ; color baseline/color ; label baseline/label" />
+
 							<canvas class="cvcobject" tal:attributes="id string:chart_${pcr/plate}_${pcr/well}" ></canvas></div>
 					</td>
 					</tr>
@@ -128,28 +135,78 @@
 		<script>
 
 
- 
-		jQuery('.covid_chart').each(function(cvc){
-		
-			var ctx = jQuery('.cvcobject', this)[0].getContext('2d');
-			var dataGraph =  [{
-						data: Array(40).fill(50), 
-						borderColor: "#b71656",
-						type: 'line',
-						pointRadius: 0,
-						borderDash: [10,5],
-						fill: false
-				  	},{
-						label: 'Line Dataset',
-						data: Array(40).fill(100), 
-						borderColor: "#236ea7",
-						type: 'line',
-						pointRadius: 0,
+ 		var myLineCharts = Array();
+ 		var yAxesLogPreset = [{
+					display: true,
+					type: 'logarithmic',
+					ticks: {min:10, autoSkip: true, maxTicksLimit: 20, callback: function(value, index, values){ return value;} }
+				}];
+ 		var yAxesLinPreset = [{
+					display: true,
+					type: 'linear',
+					ticks: {min:0, autoSkip: true, maxTicksLimit: 20 }
+				}];
 
-						borderDash: [10,5],
-						fill: false
-				 }];
+
+ 		function tscale(){
+ 			myLineCharts.forEach(function(entry) {
+ 				if (jQuery('#scaleControl').html() == 'Scala Lineare'){
+					all2Lin(entry);
+					jQuery('#scaleControl').html('Scala Logaritmica');
+				}
+				else{
+					all2Log(entry);
+					jQuery('#scaleControl').html('Scala Lineare');
+				}
+
+			});
+ 		}
+
+ 		function all2Log(chart) { 
+			var yScale = chart.scales['y-axis-0'];
+			chart.options.scales = {
+				yAxes: yAxesLogPreset
+			};
+			chart.update(); 
+			yScale = chart.scales['y-axis-0'];
+		}
+ 		function all2Lin(chart) { 
+			var yScale = chart.scales['y-axis-0'];
+			chart.options.scales = {
+				yAxes: yAxesLinPreset
+			};
+			chart.update(); 
+			yScale = chart.scales['y-axis-0'];
+		}
+
+
+		jQuery('.covid_chart').each(function(cvc){
+
+			var plotLabels = jQuery('.plotoptions',this).attr('plotlabels').split(',');
+			var max_pcr_cycles = jQuery('.plotoptions',this).attr('max_pcr_cycles');
 			
+			var ctx = jQuery('.cvcobject', this)[0].getContext('2d');
+			var dataGraph = Array();
+
+			jQuery('.baseline', this).each(function(e){
+
+				baselineLabel = jQuery(this).attr('label');
+				baselineValue = jQuery(this).attr('value');
+				baselineColor = jQuery(this).attr('color');
+
+
+				dataGraph.push({
+					label: baselineLabel,
+					data: Array(parseInt(max_pcr_cycles)).fill(baselineValue), 
+					borderColor: baselineColor,
+					type: 'line',
+					pointRadius: 0,
+					borderDash: [10,5],
+					fill: true,
+					backgroundColor: baselineColor+'22'
+				})
+			});
+
 
 			jQuery('.curveDistribution', this).each(function(e){
 				dataGraph.push(
@@ -165,46 +222,36 @@
 			var data = 
 
 			{
-				labels: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40],
+				labels: plotLabels,
 				datasets: dataGraph
 			};
 
-			window.myLineChart = new Chart(ctx,
-			{
-				type: 'line',
-				data: data,
-				options:
+			myLineCharts.push( new Chart(ctx,
 				{
-					responsive:true,
-					maintainAspectRatio: false,
-					legend: 
+					type: 'line',
+					data: data,
+					options:
 					{
-						labels:
+						responsive:true,
+						maintainAspectRatio: false,
+						legend: 
 						{
-							filter: function(legendItem, chartData)
+							labels:
 							{
-								return (legendItem.datasetIndex > 1) 
+								filter: function(legendItem, chartData)
+								{
+									return (legendItem.datasetIndex > jQuery('.baseline', this).length+1) 
+								}
 							}
+						},
+						scales:
+						{
+							xAxes: [{display: true}],
+							yAxes: yAxesLogPreset
 						}
-					},
-					scales:
-					{
-						xAxes: [{display: true}],
-						yAxes: [{
-							display: true,
-							type: 'logarithmic',
-							ticks: { 
-								min:10,
-
-								autoSkip: true,
-	        					maxTicksLimit: 20, 
-							 	callback: function(value, index, values){ return value;}
-							 	
-							}
-						}]
 					}
-				}
-			});
+				})
+			);
 		})
 		</script>
 
