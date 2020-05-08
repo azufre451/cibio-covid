@@ -138,11 +138,13 @@
  		var myLineCharts = Array();
  		var yAxesLogPreset = [{
 					display: true,
+					scaleLabel: {display:true, labelString : 'RFU (Log)'},
 					type: 'logarithmic',
 					ticks: {min:10, autoSkip: true, maxTicksLimit: 20, callback: function(value, index, values){ return value;} }
 				}];
  		var yAxesLinPreset = [{
 					display: true,
+					scaleLabel: {display:true, labelString : 'RFU'},
 					type: 'linear',
 					ticks: {min:0, autoSkip: true, maxTicksLimit: 20 }
 				}];
@@ -246,7 +248,8 @@
 						},
 						scales:
 						{
-							xAxes: [{display: true}],
+
+							xAxes: [{display: true, scaleLabel: {display:true, labelString : 'PCR Cycle'}}],
 							yAxes: yAxesLogPreset
 						}
 					}
