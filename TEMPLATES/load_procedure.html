@@ -24,7 +24,7 @@
 	<p style="font-family:monospace; margin-left:10px; border-left:3px solid #555; padding-left:10px; margin-top:10px;" tal:content="structure stdout" /><hr/>
 	<p style="font-family:monospace; margin-left:10px; border-left:3px solid red; padding-left:10px; margin-top:10px;" tal:content="structure stderr" />
 
-<a href="load_data.php"> Torna indietro al caricamento </a> <a tal:condition="exists:iplate" tal:attributes="href string:search.php?plate=${iplate}"> Visualizza la Plate appena inserita</a>
+<a href="load_data.php"> Torna indietro al caricamento </a> oppure <a tal:condition="exists:iplate" tal:attributes="href string:search.php?plate=${iplate}"> Visualizza la Plate appena inserita</a>
 
 </div>
 

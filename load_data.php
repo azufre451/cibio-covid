@@ -2,7 +2,6 @@
 
 session_start();
 
-if(!isSet($_SESSION['user'])){ header('location:index.php'); exit;} ;
 
 include('includes/app_include.php');
 include('includes/PHPTAL-1.3.0/PHPTAL.php');
@@ -43,19 +42,40 @@ function cmd_exec($cmd, &$stdout, &$stderr)
 	return $exit;
 }
 
+$additionalParams = '';
 $stderr = '';
 $stdout = '';
+
+if( isSet ($_GET['dologin']))
+{
+ 
+	if($_POST['username'] == 'dma' && $_POST['password'] == md5('refertazione'))
+    {
+		$_SESSION['username'] = 'dma'; 
+    }
+
+}
 if( isSet( $_FILES["fileToUpload"]) )
 {
+    if(!isSet($_SESSION['username'])){
+        exit;
+    } ;
+
 	$template = new PHPTAL('TEMPLATES/load_procedure.html');
 	$tempFolder = tempdir();	 
 
 	$uploadType=$_POST['uploadtype'];
 	
 
+	if(isSet($_POST['replaceData']) && $_POST['replaceData'] == 'replaceData')
+	{
+		$additionalParams.='--replace_data';
+	}
+
 	$target_file = $tempFolder .'/'. basename($_FILES["fileToUpload"]["name"]);
 	
-	if(isset($_POST["submit"])) {
+	if(isset($_POST["submit"]))
+	{
 		 if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
 			
 
@@ -63,21 +83,23 @@ if( isSet( $_FILES["fileToUpload"]) )
 			
 		 	if($uploadType == 'analisiBF' && strpos ( $fbasename,'_analisi.xlsm') !== false ){
 				#echo "U";
-				cmd_exec("/var/www/html/anaconda3/bin/python backend/extr_data_analysis.py --kf --data_folder $tempFolder", $stdout,$stderr);
 
-                $template->stdout = implode('<br/>',$stdout);
-                $template->stderr = implode('<br/>',$stderr);
-                $template->loadedFile = $fbasename;
-                $template->iplate = str_replace('_analisi.xlsm','',$fbasename);
+
+				cmd_exec("/var/www/html/anaconda3/bin/python backend/extr_data_analysis.py --kf --data_folder $tempFolder $additionalParams", $stdout,$stderr);
+
+				$template->stdout = implode('<br/>',$stdout);
+				$template->stderr = implode('<br/>',$stderr);
+				$template->loadedFile = $fbasename;
+				$template->iplate = str_replace('_analisi.xlsm','',$fbasename);
 			}
 
 			elseif($uploadType == 'estrazioni' && strpos($fbasename,'.xlsm') !== false)
 			{   
 				cmd_exec("/var/www/html/anaconda3/bin/python backend/extr_estrazioni.py --extr_folder $tempFolder", $stdout, $stderr);
 
-                $template->stdout = implode('<br/>',$stdout);
-                $template->stderr = implode('<br/>',$stderr);
-                $template->loadedFile = $fbasename;
+				$template->stdout = implode('<br/>',$stdout);
+				$template->stderr = implode('<br/>',$stderr);
+				$template->loadedFile = $fbasename;
 			}
 			else{
 				echo "Tipo di upload non concesso! Forse hai selezionato il tipo file sbagliato? ( $uploadType , $fbasename ".($uploadType == 'analisiBF').")";
@@ -87,10 +109,10 @@ if( isSet( $_FILES["fileToUpload"]) )
 			}
 
 
-  		} else {
-			echo "Errore nel caricamento del file!"; exit;
-  	}
+  		} else {echo "Errore nel caricamento del file!"; exit;	}
 
+		unlink($target_file);
+		rmdir($tempFolder);   
 	}
 
 
@@ -98,10 +120,11 @@ if( isSet( $_FILES["fileToUpload"]) )
 else
 {
 	$template = new PHPTAL('TEMPLATES/upload_results.html');
-	
-
 }
 
+if(isSet($_SESSION['username'])){
+    $template->login=true;
+}
 
 try{
 	echo $template->execute();

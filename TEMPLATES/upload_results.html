@@ -16,10 +16,46 @@
 		font-style: italic;
 	}
 </style>
-		<div style="padding:5px 20px; margin-top: 20px; width:50%; margin:auto; background-color:#e8d7a8; border: 1px solid #999;">
+<script type="text/javascript" src="TEMPLATES/js/jquery.js" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/core.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/md5.js"></script>
+<script>
+    
+    function crypt(ida){
+
+    	var passhash = CryptoJS.MD5(jQuery('#password',ida).val()).toString();
+    	
+    	jQuery('#password',ida).val(passhash);
+    	
+    	
+    	
+    }
+	function checker(ida){
+		
+		if (jQuery(ida).val()!='estrazioni')
+			jQuery('#checkboxTR').fadeIn();
+		else
+			jQuery('#checkboxTR').fadeOut();
+	}
+</script>
+		<div tal:condition="not:exists:login" style="padding:5px 20px; margin-top: 20px; width:50%; margin:auto; background-color:#c4d89f; border: 1px solid #999;">
+			<p> Questa funzione richiede il login. Inserire le credenziali di accesso </p>
+			<form method="POST" action="load_data.php?dologin=true" onsubmit="javascript:crypt(this);">
+				<table style="width:300px; margin:auto;">
+					<tr><td style="font-weight: bold;">Username</td> <td width="100px;"> <input type="text" name="username"/>  </td></tr>
+					<tr><td style="font-weight: bold;">Password</td> <td width="100px;"> <input id="password" type="password" name="password"/>  </td></tr>
+					<tr><td></td> <td style="text-align:center;"> <input width="100px;" type="submit" value="Invia" /></td></tr>
+
+				</table>
+
+			</form>
+		</div>
+
+		<div  tal:condition="exists:login"  style="padding:5px 20px; margin-top: 20px; width:50%; margin:auto; background-color:#e8d7a8; border: 1px solid #999;">
 		<p style="font-weight:bold;"> Da questo pannello puoi caricare i dati di Analisi ed Estrazioni </p>
-		<p> Per i file di analisi puoi caricare il file Excel salvato nella cartella estrazioni (per esempio <span class="emph">V220050808_analisi.xlsm</span>) </p>
-		<p> Per i file di estrazioni puoi caricare il file Excel salvato nella cartella estrazioni (per esempio <span class="emph">8_200508.xlsm</span>) </p>
+		<p><ul><li>Per i file di analisi puoi caricare il file Excel salvato nella cartella estrazioni (per esempio <span class="emph">V220050808_analisi.xlsm</span>) <br /><span style="color:red; font-weight:bold;">Nota: </span> non caricare il file "Summary Estrazioni", ma il singolo file di ogni batch.</li><br />
+
+		<li> Per i file di analisi puoi caricare il file Excel salvato nella cartella estrazioni (per esempio <span class="emph">8_200508.xlsm</span>) </li></ul></p>
 		<form action="load_data.php" method="POST" enctype="multipart/form-data">
 		<table>
 			<tr>
@@ -30,18 +66,19 @@
 			</tr>
 			<tr>
 			  <td> <b>Cosa stai caricando:</b></td>
-			  	<td> <select style="border:1px solid #444; padding:5px;" name="uploadtype">
-			  	<option value="analisiBF">File di Analisi (KF - Bosphore)</option>
-			  	<option value="estrazioni">File di Estrazioni</option>
+			  	<td> <select onchange="javascript:checker(this);" style="border:1px solid #444; padding:5px;" name="uploadtype">
+			  	<optgroup label="Analisi"><option value="analisiBF">File di Analisi (Bosphore)</option> <option value="analisiRS">File di Analisi (Realstar)</option></optgroup>
+			  	<optgroup label="Estrazioni"><option value="estrazioni" selected="selected">File di Estrazioni Kingfisher</option></optgroup>
 			  </select></td>
 			</tr>
-			<tr>
+			<tr id="checkboxTR" style="display:none;">
 				<td />
-				<td> <input type="checkbox" name="replace" id="replace"/> Rimpiazza eventuali dati già inseriti <br/>per la stessa plate / lo stesso batch </td>
+				<td> <input type="checkbox" name="replaceData" value="replaceData" id="replaceData"/> Rimpiazza eventuali dati già inseriti <br/>per la stessa plate / lo stesso batch </td>
 			</tr>
 			 <tr> <td colspan="2" style="text-align:center"><input type="submit" style="font-size:20px;" value="- Carica il file -" name="submit"/> </td> </tr>
 		</table>
 		</form>
+		<a href="index.php"> Torna indietro alla home page </a>
 		</div>
 
 
