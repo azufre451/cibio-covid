@@ -8,6 +8,7 @@ import sys
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--extr_folder', help='path to the "Estrazioni" folder. The folder must contain xlsx or xlsm files from the Estrazioni pipeline. One file per batch mubst pe present.',required=True)
+
 args = parser.parse_args()
 
 
@@ -19,11 +20,15 @@ for extratcionsFile in glob.glob(args.extr_folder+'/*.xls*'):
 
 	wb_obj = openpyxl.load_workbook(extratcionsFile,data_only=True,read_only=True) 
 	#sheet = wb_obj.active
-	sheet = wb_obj["Accettazione"] if "Accettazione" in wb_obj else wb_obj.active
 
+	try:
+		sheet = wb_obj["Accettazione"]
  
-	batchName= sheet["B2"].value.split('_')[0]
-	batchDate= sheet["B2"].value.split('_')[1]
+		batchName= sheet["B2"].value.split('_')[0]
+		batchDate= sheet["B2"].value.split('_')[1]
+	except:
+		print("-- <span class=\"errorMessage\">ERRORE</span> | Non trovo la tab 'Accettazione' nel file caricato. Sicuro sia il file giusto?") 
+		sys.exit(9)
 
 
 

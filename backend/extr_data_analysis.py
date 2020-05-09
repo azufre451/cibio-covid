@@ -25,7 +25,8 @@ def na2none(a):
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_folder', help='his is the folder containing all the Analisi Excell files. One file per plate.', required=True)
 parser.add_argument('--control_wells', help="manual setup for control wells in the plate (list, space separated. Esample: A01 A02 A03 ...)", default=[], nargs='+')
-parser.add_argument('--kit', default="bosphore")
+parser.add_argument('--kit', action='store_true',default="bosphore")
+parser.add_argument('--replace_data', action='store_true',  help="overwrite the data")
 parser.add_argument('--kf', action='store_true',help='Equals to --control_wells A01 A02 A12 D04 D08')
 parser.add_argument('--old_plates', action='store_true',help='Equals to --control_wells H01 A01 A02 A05 A08 A12')
 parser.add_argument('--well_allow', default=[], nargs='+', help="Allows to override the plate setup to include a sample in an otherwise 'control' well")
@@ -194,6 +195,13 @@ for analFile in glob.glob(args.data_folder+'/*.xls*'):
 				curves2add.append( (plateName,wellDB,fluorophore,curveString) )
 try:
  
+	if args.replace_data:
+		sql = 'DELETE FROM pcr_plates WHERE plate  = %s'
+		mycursor.execute(sql, (plateName,))
+		sql = 'DELETE FROM curves WHERE plate  = %s'
+		mycursor.execute(sql, (plateName,))
+		print("-- Eliminazione dati vecchia plate | <span class=\"okMessage\">OK</span>")
+
 
 	sql = 'INSERT IGNORE INTO pcr_plates (plate, data_pcr, barcode, well, Cy5, FAM, HEX, esito_automatico, esito_pcr, isControl,batch_kf,kit) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
 	mycursor.executemany(sql, samplesToAdd)
