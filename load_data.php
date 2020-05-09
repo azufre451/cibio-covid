@@ -48,8 +48,8 @@ $stdout = '';
 
 if( isSet ($_GET['dologin']))
 {
- 
-	if($_POST['username'] == 'dma' && $_POST['password'] == md5('refertazione'))
+
+	if($_POST['username'] == $OPT_refertUSR && $_POST['password'] == md5($OPT_refertPWD))
     {
 		$_SESSION['username'] = 'dma'; 
     }

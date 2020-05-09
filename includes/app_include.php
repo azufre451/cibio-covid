@@ -44,15 +44,16 @@ class Database
 	}
 }
 
-
-$fluor2colors	=	array('FAM' => '#36a723','HEX' => '#2e69d5','Cy5' => '#b71656');
+$OPT_refertUSR = 'dma';
+$OPT_refertPWD = '***REMOVED***';
+$fluor2colors	=	array('FAM' => '#36a723','HEX' => '#2e69d5','Cy5' => '#b71656','TRed' => '#ff2f0e');
 $plotOptions	=	array('bosphore'=> array(
-												'max_pcr_cycles' => 40,
-												'plotlabels' => implode(',',range(1,40)),
-												'plotBaseLines' => array(
-																			array('value'=>'100','color'=>$fluor2colors['HEX'],'label' => 'HEX Threshold'),
-																			array('value'=>'50','color'=>$fluor2colors['Cy5'],'label' => 'Cy5/FAM Threshold')
-																		)
+											'max_pcr_cycles' => 40,
+											'plotlabels' => implode(',',range(1,40)),
+											'plotBaseLines' => array(
+																	array('value'=>'100','color'=>$fluor2colors['HEX'],'label' => 'HEX Threshold'),
+																	array('value'=>'50','color'=>$fluor2colors['Cy5'],'label' => 'Cy5/FAM Threshold')
+																	)
 											)
 						 );
 
