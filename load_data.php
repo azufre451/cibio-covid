@@ -140,8 +140,8 @@ if( isSet( $_FILES["fileToUpload"]) )
 
   		} else {echo "Errore nel caricamento del file! >> " . $_FILES["fileToUpload"]["error"]; exit;	}
 
-		#unlink($target_file);
-		#rmdir($tempFolder);   
+		unlink($target_file);
+		rmdir($tempFolder);   
 	}
 
 
