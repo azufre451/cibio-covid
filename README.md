@@ -97,4 +97,4 @@ Will load all the Analisi files in the folder `200410`
 
 ___
 
-The code and templates in this repository were implemented and designed by *Moreno Zolfo*, *Tarcisio Fedrizzi, *Serena Manara* and *Francesca Demichelis*
+The code and templates in this repository were implemented and designed by *Moreno Zolfo*, *Tarcisio Fedrizzi*, *Serena Manara* and *Francesca Demichelis*
