@@ -43,8 +43,8 @@ function cmd_exec($cmd, &$stdout, &$stderr)
 }
 
 $additionalParams = '';
-$stderr = '';
-$stdout = '';
+$stderr = NULL;
+$stdout = NULL;
 
 if( isSet ($_GET['dologin']))
 {
@@ -72,27 +72,26 @@ if( isSet( $_FILES["fileToUpload"]) )
 		$additionalParams.='--replace_data';
 	}
 
-	$target_file = $tempFolder .'/'. basename($_FILES["fileToUpload"]["name"]);
-	
+	$target_file = str_replace(' ','_',$tempFolder .'/'. basename($_FILES["fileToUpload"]["name"]));
+
 	if(isset($_POST["submit"]))
 	{
 		 if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
 			
 
 			$fbasename = basename($_FILES["fileToUpload"]["name"]);
-			
-		 	if($uploadType == 'analisiBF' && strpos ( $fbasename,'_analisi.xlsm') !== false ){
+
+		 	if($uploadType == 'analisi' && strpos ( $fbasename,'_analisi.xlsm') !== false ){
 				#echo "U";
 
 
-				cmd_exec("/var/www/html/anaconda3/bin/python backend/extr_data_analysis.py --kf --data_folder $tempFolder $additionalParams", $stdout,$stderr);
+				cmd_exec("/var/www/html/anaconda3/bin/python backend/extr_data_analysis.py --data_folder $tempFolder $additionalParams", $stdout,$stderr);
 
 				$template->stdout = implode('<br/>',$stdout);
 				$template->stderr = implode('<br/>',$stderr);
 				$template->loadedFile = $fbasename;
 				$template->iplate = str_replace('_analisi.xlsm','',$fbasename);
 			}
-
 			elseif($uploadType == 'estrazioni' && strpos($fbasename,'.xlsm') !== false)
 			{   
 				cmd_exec("/var/www/html/anaconda3/bin/python backend/extr_estrazioni.py --extr_folder $tempFolder", $stdout, $stderr);
@@ -100,6 +99,34 @@ if( isSet( $_FILES["fileToUpload"]) )
 				$template->stdout = implode('<br/>',$stdout);
 				$template->stderr = implode('<br/>',$stderr);
 				$template->loadedFile = $fbasename;
+			}
+			elseif($uploadType == 'ministero' && strpos($fbasename,'.xlsx') !== false)
+			{
+				$retval = cmd_exec("/var/www/html/anaconda3/bin/python backend/ministero.py --minfile $target_file", $stdout, $stderr);
+				
+				if(!$retval){
+
+
+				header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+				header('Cache-Control: no-store, no-cache, must-revalidate');
+				header('Cache-Control: post-check=0, pre-check=0', false);
+				header('Cache-Control: private');
+				header('Pragma: no-cache');
+				header("Content-Transfer-Encoding: binary");
+				header("Content-type: application/vnd.ms-excel");
+
+				$tit = "ministero_".str_replace('.xlsx','.csv',$fbasename);
+				header("Content-disposition: attachment; filename=\"{$tit}\"");
+				echo(implode('',$stdout));
+
+				exit;
+
+				}
+				else{
+					$template->stdout = '';
+					$template->stderr = implode('<br/>',$stderr);
+					$template->loadedFile = $fbasename;
+				}
 			}
 			else{
 				echo "Tipo di upload non concesso! Forse hai selezionato il tipo file sbagliato? ( $uploadType , $fbasename ".($uploadType == 'analisiBF').")";
@@ -109,10 +136,12 @@ if( isSet( $_FILES["fileToUpload"]) )
 			}
 
 
-  		} else {echo "Errore nel caricamento del file!"; exit;	}
 
-		unlink($target_file);
-		rmdir($tempFolder);   
+
+  		} else {echo "Errore nel caricamento del file! >> " . $_FILES["fileToUpload"]["error"]; exit;	}
+
+		#unlink($target_file);
+		#rmdir($tempFolder);   
 	}
 
 

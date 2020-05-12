@@ -25,10 +25,10 @@ def na2none(a):
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_folder', help='his is the folder containing all the Analisi Excell files. One file per plate.', required=True)
 parser.add_argument('--control_wells', help="manual setup for control wells in the plate (list, space separated. Esample: A01 A02 A03 ...)", default=[], nargs='+')
-parser.add_argument('--kit', action='store_true',default="bosphore")
+#parser.add_argument('--kit',default="bosphore")
 parser.add_argument('--replace_data', action='store_true',  help="overwrite the data")
-parser.add_argument('--kf', action='store_true',help='Equals to --control_wells A01 A02 A12 D04 D08')
-parser.add_argument('--old_plates', action='store_true',help='Equals to --control_wells H01 A01 A02 A05 A08 A12')
+#parser.add_argument('--kf', action='store_true',help='Equals to --control_wells A01 A02 A12 D04 D08')
+#parser.add_argument('--old_plates', action='store_true',help='Equals to --control_wells H01 A01 A02 A05 A08 A12')
 parser.add_argument('--well_allow', default=[], nargs='+', help="Allows to override the plate setup to include a sample in an otherwise 'control' well")
 parser.add_argument('--platename_from_file',action='store_true', help='allows to take the Plate Name from the filename, instead thatn from the designated cell in the template')
 
@@ -37,21 +37,21 @@ parser.add_argument('--platename_from_file',action='store_true', help='allows to
 
 args = parser.parse_args()
 
-control_samples = ['NTC','PK','PE','BE','55555','77777','11111111','33333','20202020','25252525','27272727', 'pcr NEG','pcr POS']
+#control_samples = ['NTC','PK','PE','BE','55555','77777','11111111','33333','20202020','25252525','27272727', 'pcr NEG','pcr POS']
 
 fluorophores=["FAM","HEX","Cy5"]
 
-if args.kf:
-	ListOfControlWells=['A01','A02','A12','D04','D08']
-elif args.old_plates:
-	ListOfControlWells=['H01','A01','A02','A05','A08','A12']
-else:
-	ListOfControlWells=list(args.control_wells)
+#if args.kf:
+#	ListOfControlWells=['A01','A02','A12','D04','D08']
+#elif args.old_plates:
+#	ListOfControlWells=['H01','A01','A02','A05','A08','A12']
+#else:
+#	ListOfControlWells=list(args.control_wells)
 
-WellsToAvoid = [_ for _ in ListOfControlWells if _ not in list(args.well_allow)]
+#WellsToAvoid = [_ for _ in ListOfControlWells if _ not in list(args.well_allow)]
 
 #print("Skipping wells: ",' '.join(WellsToAvoid))
-print("-- Pozzetti di Controllo: "+' '.join(WellsToAvoid))
+#print("-- Pozzetti di Controllo: "+' '.join(WellsToAvoid))
 
 try: 
 
@@ -110,23 +110,21 @@ for analFile in glob.glob(args.data_folder+'/*.xls*'):
 
 		well_nozero= str(row[0].value)
 		well= str(row[1].value)
-			#target= str(row[3].value)
+			
 		barcode= str(row[3].value)
-		isempty= int(row[8].value)
-		is_control= int(barcode in control_samples or well in WellsToAvoid)
 		batch_kf=str(row[4].value)
-
- 
 
 		val_cy5 = na2none(row[5].value)
 		val_fam = na2none(row[6].value)
 		val_hex = na2none(row[7].value)
-
-
-
+		isempty= int(row[8].value)
+		is_control= int(row[9].value) # int(barcode in control_samples or well in WellsToAvoid)
+		
 		auto_result = row[12].value
 
 		final_result = row[17].value if row[17].value != 'NON REFERTARE' else row[14].value
+
+		kit=str(row[21].value)
 
 		if final_result not in ['POSITIVO','NEGATIVO','RIPETERE ESTRAZIONE','RIPETERE PCR','RIPETERE TAMPONE']:
 			if is_control:
@@ -143,7 +141,7 @@ for analFile in glob.glob(args.data_folder+'/*.xls*'):
 			mycursor.fetchone()
 			if(mycursor.rowcount > 0):
 						#print("OK", plateName,barcode,well,val_cy5,val_fam,val_hex,auto_result,final_result )
-				samplesToAdd.append ( (plateName, plateDate,barcode,well,val_cy5,val_fam,val_hex,auto_result,final_result, is_control,batch_kf,args.kit))
+				samplesToAdd.append ( (plateName, plateDate,barcode,well,val_cy5,val_fam,val_hex,auto_result,final_result, is_control,batch_kf,kit))
 				well2barcode[well_nozero] = barcode
 				if final_result not in results_tracker:
 					results_tracker[final_result] = 1
