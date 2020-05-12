@@ -1,4 +1,5 @@
-# cibio-covid
+# CIBIO-COVID
+
 CIBIO Covid Code - Maintenance and Update scripts. This repo contains the code for the intranet system developed to support the COVID-19 testing operations ad the DMA Lab of the University of Trento.
 
 ![](https://github.com/azufre451/cibio-covid/blob/master/TEMPLATES/img/example_covid_2.jpg)
@@ -18,8 +19,17 @@ CIBIO Covid Code - Maintenance and Update scripts. This repo contains the code f
 
 _Note_: Be sure to uninstall `mysql-connector` from your python installation (if present) and install `mysql-connector-python`
 
+## Data View ##
 
-## extr_estrazioni
+Available within UniTN VPN [Here](http://colab1.cibio.unitn.it:8080/cibio-covid/index.php)
+
+## Data Upload ##
+
+Files can be loaded into the Database with an online procedure available from within UniTN VPN [available here](http://colab1.cibio.unitn.it:8080/cibio-covid/load_data.php). Excel templates for data analysis are provided to the data-entry operators by the DMA Staff.
+
+Alternatively, they can be manually loaded with two scripts in Python:
+
+### Samples extraction template (extr_estrazioni.py)
 
 extr_estrazioni.py populates the DB with the samples from the "estrazioni" excel template. It takes as input a folder with all the Excel files from the `estrazioni` procedure.
 
@@ -43,7 +53,7 @@ extr_estrazioni.py --extr_folder </path/to/your/extrazioni/folder>/200410/
 Will load all the samples stored in `200410`
 
 
-## extr_data_analysis.py 
+### Samples Data Analysis template (extr_data_analysis.py)
 
 This analyses the `Analisi` files to populate the DB with the results of each PCR plate. The files must be in the right format as defined by the template.
 
