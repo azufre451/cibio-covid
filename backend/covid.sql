@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 4.6.6deb5
+-- version 5.0.2
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost:3306
--- Generation Time: Apr 11, 2020 at 11:15 AM
--- Server version: 5.7.29-0ubuntu0.18.04.1
--- PHP Version: 7.2.24-0ubuntu0.18.04.3
+-- Host: colab1.cibio.unitn.it:33006
+-- Creato il: Mag 12, 2020 alle 20:05
+-- Versione del server: 8.0.19
+-- Versione PHP: 7.4.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -23,7 +24,20 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `estrazioni`
+-- Struttura della tabella `curves`
+--
+
+CREATE TABLE `curves` (
+  `plate` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `well` varchar(5) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `fluorophore` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `curve` text COLLATE utf8mb4_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=COMPRESSED;
+
+-- --------------------------------------------------------
+
+--
+-- Struttura della tabella `estrazioni`
 --
 
 CREATE TABLE `estrazioni` (
@@ -35,7 +49,7 @@ CREATE TABLE `estrazioni` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `pcr_plates`
+-- Struttura della tabella `pcr_plates`
 --
 
 CREATE TABLE `pcr_plates` (
@@ -46,14 +60,18 @@ CREATE TABLE `pcr_plates` (
   `Cy5` float DEFAULT NULL,
   `FAM` float DEFAULT NULL,
   `HEX` float DEFAULT NULL,
-  `esito_automatico` enum('POSITIVO','NEGATIVO','DUBBIO TECNICO') NOT NULL,
-  `esito_pcr` enum('POSITIVO','NEGATIVO','RIPETERE PCR','RIPETERE ESTRAZIONE','ERRORE COMPILAZIONE') NOT NULL
+  `TRed` float DEFAULT NULL,
+  `esito_automatico` enum('POSITIVO','NEGATIVO','DUBBIO TECNICO','CONTROLLO') CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `esito_pcr` enum('POSITIVO','NEGATIVO','RIPETERE PCR','RIPETERE ESTRAZIONE','ERRORE COMPILAZIONE','RIPETERE TAMPONE','CONTROLLO') CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `isControl` tinyint(1) NOT NULL DEFAULT '0',
+  `batch_kf` varchar(3) NOT NULL,
+  `kit` enum('bosphore','realstar','liferiver') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `samples`
+-- Struttura della tabella `samples`
 --
 
 CREATE TABLE `samples` (
@@ -62,26 +80,34 @@ CREATE TABLE `samples` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Indexes for dumped tables
+-- Indici per le tabelle scaricate
 --
 
 --
--- Indexes for table `estrazioni`
+-- Indici per le tabelle `curves`
+--
+ALTER TABLE `curves`
+  ADD PRIMARY KEY (`plate`,`well`,`fluorophore`),
+  ADD KEY `plate` (`plate`);
+
+--
+-- Indici per le tabelle `estrazioni`
 --
 ALTER TABLE `estrazioni`
   ADD PRIMARY KEY (`barcode`,`data_estrazione`,`batch`);
 
 --
--- Indexes for table `pcr_plates`
+-- Indici per le tabelle `pcr_plates`
 --
 ALTER TABLE `pcr_plates`
-  ADD PRIMARY KEY (`plate`,`barcode`);
+  ADD PRIMARY KEY (`plate`,`barcode`,`well`);
 
 --
--- Indexes for table `samples`
+-- Indici per le tabelle `samples`
 --
 ALTER TABLE `samples`
   ADD PRIMARY KEY (`barcode`);
+COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
