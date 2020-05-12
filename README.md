@@ -3,6 +3,12 @@ CIBIO Covid Code - Maintenance and Update scripts. This repo contains the code f
 
 ## Requirements
 
+### For the frontend (DB sample search):
+- PHP 7.2 (frontend)
+- MySQL (frontend)
+
+### For the backend (data loading):
+
 - Python3
 - openpyxl
 - mysql-connector-python-rf
