@@ -1,7 +1,7 @@
 # cibio-covid
 CIBIO Covid Code - Maintenance and Update scripts. This repo contains the code for the intranet system developed to support the COVID-19 testing operations ad the DMA Lab of the University of Trento.
 
-![](https://github.com/azufre451/cibio-covid/blob/master/TEMPLATES/img/example_covid.jpg)
+![](https://github.com/azufre451/cibio-covid/blob/master/TEMPLATES/img/example_covid_2.jpg)
 
 ## Requirements
 
