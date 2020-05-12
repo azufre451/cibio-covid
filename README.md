@@ -41,7 +41,6 @@ This analyses the `Analisi` files to populate the DB with the results of each PC
 
 ```
 usage: extr_data_analysis.py [-h] --data_folder DATA_FOLDER
-                             [--well_avoid WELL_AVOID [WELL_AVOID ...]]
                              [--platename_from_file]
 
 optional arguments:
@@ -49,11 +48,7 @@ optional arguments:
   --data_folder DATA_FOLDER
                         his is the folder containing all the Analisi Excell
                         files. One file per plate.
-  --well_avoid WELL_AVOID [WELL_AVOID ...]
-                        allows to skip for certain wells in the plate. This is
-                        not required and it is already set for the standard
-                        use. Examples of values: "A01 A02 A03" will skip the first
-                        three wells of A column.
+
   --platename_from_file
                         allows to take the Plate Name from the filename,
                         instead than from the designated cell in the Excel template

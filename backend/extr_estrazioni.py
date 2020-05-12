@@ -46,7 +46,7 @@ try:
 	mydb = mysql.connector.connect(
 		host="colab1.cibio.unitn.it",
 		user="covid_user",
-		passwd="***REMOVED***",
+		passwd="Q2GtXNpnKj94IP4HEo0IyvCun",
 		database="covid",
 		port=33006,
 		auth_plugin='mysql_native_password'
