@@ -5,6 +5,7 @@ import openpyxl
 import argparse
 import glob
 import sys
+from conf import DBConf
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--extr_folder', help='path to the "Estrazioni" folder. The folder must contain xlsx or xlsm files from the Estrazioni pipeline. One file per batch mubst pe present.',required=True)
@@ -44,19 +45,19 @@ for extratcionsFile in glob.glob(args.extr_folder+'/*.xls*'):
 
 try:
 	mydb = mysql.connector.connect(
-		host="colab1.cibio.unitn.it",
-		user="covid_user",
-		passwd="Q2GtXNpnKj94IP4HEo0IyvCun",
-		database="covid",
-		port=33006,
-		auth_plugin='mysql_native_password'
+		host=DBConf.colab_host,
+		user=DBConf.colab_user,
+		passwd=DBConf.colab_passwd,
+		database=DBConf.colab_database,
+		port=DBConf.colab_port,
+		auth_plugin=DBConf.colab_auth_plugin
 	)
 
 	mycursor = mydb.cursor()
 
 	print("-- Connessione al Database riuscita") 
 
-
+	sys.exit(0)
 
 	sql = "INSERT IGNORE INTO samples (barcode, data_checkin) VALUES (%s, %s)"
 	mycursor.executemany(sql, [(_[0],_[1]) for _ in samplesToAdd ] )

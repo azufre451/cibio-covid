@@ -9,6 +9,7 @@ import sys
 from locale import atof, setlocale, LC_NUMERIC, LC_ALL
 from itertools import islice
 import pandas as pd
+from conf import DBConf
 #setlocale(LC_NUMERIC,('it_IT','UTF-8'))
 
 
@@ -57,12 +58,12 @@ try:
 
 
 	mydb = mysql.connector.connect(
-	  host="colab1.cibio.unitn.it",
-	  user="covid_user",
-	  passwd="Q2GtXNpnKj94IP4HEo0IyvCun",
-	  database="covid",
-	  port=33006,
-	  auth_plugin='mysql_native_password'
+		host=DBConf.colab_host,
+		user=DBConf.colab_user,
+		passwd=DBConf.colab_passwd,
+		database=DBConf.colab_database,
+		port=DBConf.colab_port,
+		auth_plugin=DBConf.colab_auth_plugin
 	)
 
 	mycursor = mydb.cursor()

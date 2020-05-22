@@ -92,7 +92,7 @@
 
 
 			<table style="margin-top:10px;">
-				<tr class="intest"> <td> Data PCR </td> <td> Plate </td>  <td> Barcode </td> <td>Batch KF</td> <td> Well</td>  <td> Cy5</td> <td> FAM</td> <td> HEX</td>   <td> Esito PCR (Automatico) </td> <td> Esito PCR (Operatore) </td></tr>
+				<tr class="intest"> <td> Data PCR </td> <td> Plate </td>  <td> Barcode </td> <td>Batch KF</td> <td> Well</td>  <td> Cy5</td> <td> FAM</td> <td> HEX</td> <td> TRed</td>   <td> Esito PCR (Automatico) </td> <td> Esito PCR (Operatore) </td></tr>
 				<tbody  tal:repeat="pcr PCRs"> 
 					<tr tal:attributes="class pcr/htmlClass" >
 						<td class="resultCell" style="width:120px" tal:content="pcr/data_pcr"/>
@@ -104,10 +104,11 @@
 						<td class="resultCell" style="width:80px; text-align:center" tal:content="pcr/Cy5"/>
 						<td class="resultCell" style="width:80px; text-align:center" tal:content="pcr/FAM"/>
 						<td class="resultCell" style="width:80px; text-align:center" tal:content="pcr/HEX"/>
+						<td class="resultCell" style="width:80px; text-align:center" tal:content="pcr/TRed"/>
 
 						
 
-						<td tal:attributes="class php: (pcr['esito_automatico'] == 'NEGATIVO') ? 'resultCell red' : 'resultCell green'" class="resultCell" style="width:130px; text-align:center" tal:content="pcr/esito_automatico"/>
+						<td class="resultCell fr" style="width:130px; text-align:center" tal:content="pcr/esito_automatico"/>
 						<td class="resultCell fr" style="width:130px; text-align:center" tal:content="pcr/esito_pcr"/>
 
 					</tr>
@@ -117,7 +118,7 @@
 
 						
 						
-						<div style="height:400px; margin:auto; width:900px; clear:both; margin-bottom:25px;" class="covid_chart">
+						<div style="height:400px; margin:auto; width:1000px; clear:both; margin-bottom:25px;" class="covid_chart">
 							<input tal:repeat="curveDescriptor pcr/curves" class="curveDistribution" tal:attributes="id string:curve_${repeat/curveDescriptor/key} ; value curveDescriptor ; fluor repeat/curveDescriptor/key ; fluorcolor php:fluor2colors[repeat.curveDescriptor.key]" type="hidden" />
 							<input class="plotoptions" tal:attributes="plotlabels php:plotoptions[pcr['kit']]['plotlabels'] ; max_pcr_cycles php:plotoptions[pcr['kit']]['max_pcr_cycles']" type="hidden" />
 

@@ -41,7 +41,7 @@
 
 
 		<table>
-			<tr class="intest"> <td> Data PCR </td> <td> Plate </td>  <td> Barcode </td> <td>Batch KF</td>  <td> Well</td>  <td> Cy5</td> <td> FAM</td> <td> HEX</td>   <td> Esito PCR (Auto) </td> <td> Esito PCR (Finale) </td></tr>
+			<tr class="intest"> <td> Data PCR </td> <td> Plate </td>  <td> Barcode </td> <td>Batch KF</td>  <td> Well</td>  <td> Cy5</td> <td> FAM</td> <td> HEX</td> <td>TRed</td>  <td> Esito PCR (Auto) </td> <td> Esito PCR (Finale) </td></tr>
 			<tbody tal:repeat="pcrgroup PCRs">
 				<tr tal:attributes="class pcr/htmlClass" tal:repeat="pcr pcrgroup">
 					<td class="resultCell" style="width:120px" tal:content="pcr/data_pcr"/>
@@ -53,8 +53,9 @@
 					<td class="resultCell" style="width:80px; text-align:center" tal:content="pcr/Cy5"/>
 					<td class="resultCell" style="width:80px; text-align:center" tal:content="pcr/FAM"/>
 					<td class="resultCell" style="width:80px; text-align:center" tal:content="pcr/HEX"/>
+					<td class="resultCell" style="width:80px; text-align:center" tal:content="pcr/TRed"/>
 
-					<td tal:attributes="class php: (pcr['esito_automatico'] == 'NEGATIVO') ? 'resultCell red' : 'resultCell green'" class="resultCell" style="width:130px; text-align:center" tal:content="pcr/esito_automatico"/>
+					<td class="resultCell fr" style="width:130px; text-align:center" tal:content="pcr/esito_automatico"/>
 					<td class="resultCell fr" style="width:130px; text-align:center" tal:content="pcr/esito_pcr"/>
 					<!--
 					<tr tal:attributes="class pcr/htmlClass" >
