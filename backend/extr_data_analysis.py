@@ -14,7 +14,7 @@ import pandas as pd
 
 
 def na2none(a):
-	
+
 	if a == 'N/A':
 		return None
 	else:
@@ -39,7 +39,7 @@ args = parser.parse_args()
 
 #control_samples = ['NTC','PK','PE','BE','55555','77777','11111111','33333','20202020','25252525','27272727', 'pcr NEG','pcr POS']
 
-fluorophores=["FAM","HEX","Cy5"]
+fluorophores=["FAM","HEX", "Texas Red","Cy5"]
 
 #if args.kf:
 #	ListOfControlWells=['A01','A02','A12','D04','D08']
@@ -53,7 +53,7 @@ fluorophores=["FAM","HEX","Cy5"]
 #print("Skipping wells: ",' '.join(WellsToAvoid))
 #print("-- Pozzetti di Controllo: "+' '.join(WellsToAvoid))
 
-try: 
+try:
 
 
 	mydb = mysql.connector.connect(
@@ -66,7 +66,7 @@ try:
 	)
 
 	mycursor = mydb.cursor()
-	print("-- Connessione al Database riuscita") 
+	print("-- Connessione al Database riuscita")
 
 except mysql.connector.Error as err:
 	print("-- <span class=\"errorMessage\">ERRORE</span> del Database: ", str(err))
@@ -87,70 +87,77 @@ for analFile in glob.glob(args.data_folder+'/*.xls*'):
 		sheet = wb_obj["analysis"]
 	except:
 		#print("Error in finding Data tab", analFile )
-		print("-- ERRORE: il file non ha la tab 'Data'")
+		print("-- ERRORE: il file non ha la tab 'analysis'")
 		sys.exit(0)
 
 
-	if not args.platename_from_file:
-		plateName= sheet["C2"].value
-		
-		print("-- Apertura: <span class=\"emph\">", os.path.basename(analFile),'</span>')
-
-		if plateName == 'XXXy' and analFile == 'Analisi/200408/V220040801_analisi.xlsx': plateName = 'V220040801'
-	else:
-		plateName = os.path.basename(analFile).replace('_analisi.xlsm','')
-
-	plateDate= '20'+plateName[2:4]+'-'+plateName[4:6]+'-'+plateName[6:8]
-
-	fline=True 
+	hh={}
+	plateName=None
 	for row in sheet.iter_rows():
-		if fline:
-			fline=False
+		if len(hh) == 0:
+			hh = {field.value: pos for (pos, field) in enumerate(row)}
+
 			continue
 
-		well_nozero= str(row[0].value)
-		well= str(row[1].value)
-			
-		barcode= str(row[3].value)
-		batch_kf=str(row[4].value)
+		if plateName is None:
+			if not args.platename_from_file:
+				plateName= row[hh['plate']].value
 
-		val_cy5 = na2none(row[5].value)
-		val_fam = na2none(row[6].value)
-		val_hex = na2none(row[7].value)
-		isempty= int(row[8].value)
-		is_control= int(row[9].value) # int(barcode in control_samples or well in WellsToAvoid)
-		
-		auto_result = row[12].value
+				print("-- Apertura: <span class=\"emph\">", os.path.basename(analFile),'</span>')
 
-		final_result = row[17].value if row[17].value != 'NON REFERTARE' else row[14].value
+				if plateName == 'XXXy' and analFile == 'Analisi/200408/V220040801_analisi.xlsx': plateName = 'V220040801'
+			else:
+				plateName = os.path.basename(analFile).replace('_analisi.xlsm','')
 
-		kit=str(row[21].value)
+			plateDate= '20'+plateName[2:4]+'-'+plateName[4:6]+'-'+plateName[6:8]
+
+
+		well_nozero= str(row[hh['well_no_zero']].value)
+		well= str(row[hh['well_with_zero']].value)
+
+		barcode= str(row[hh['barcode']].value)
+		batch_kf=str(row[hh['batch']].value)
+
+		val_cy5 = na2none(row[hh['cy5_cq']].value)
+		val_fam = na2none(row[hh['fam_cq']].value)
+		val_hex = na2none(row[hh['hex_cq']].value)
+		val_tred = na2none(row[hh['texas_red_cq']].value)
+		isempty= int(row[hh['is_well_empy']].value)
+		is_control= int(row[hh['is_control']].value) # int(barcode in control_samples or well in WellsToAvoid)
+
+		auto_result = row[hh['test_result_auto']].value
+
+		final_result = row[hh['final_result']].value if row[hh['final_result']].value != 'NON REFERTARE' else row[hh['user_result']].value
+
+		kit=str(row[hh['kit_name']].value)
 
 		if final_result not in ['POSITIVO','NEGATIVO','RIPETERE ESTRAZIONE','RIPETERE PCR','RIPETERE TAMPONE']:
 			if is_control:
 				final_result = 'CONTROLLO'
 				auto_result = 'CONTROLLO'
+			elif final_result == 'CORRETTO' and auto_result == 'RIPETERE TAMPONE':
+				final_result = 'RIPETERE TAMPONE'
 			else:
 				final_result = 'ERRORE COMPILAZIONE'
 
 		if str (barcode) != "0" and barcode != 'None' and  not isempty:
 
-			
+
 			sql = 'SELECT 1 FROM samples WHERE barcode = %s'
 			mycursor.execute(sql, (barcode,))
 			mycursor.fetchone()
 			if(mycursor.rowcount > 0):
 						#print("OK", plateName,barcode,well,val_cy5,val_fam,val_hex,auto_result,final_result )
-				samplesToAdd.append ( (plateName, plateDate,barcode,well,val_cy5,val_fam,val_hex,auto_result,final_result, is_control,batch_kf,kit))
+				samplesToAdd.append ( (plateName, plateDate,barcode,well,val_cy5,val_fam,val_hex,val_tred,auto_result,final_result, is_control,batch_kf,kit))
 				well2barcode[well_nozero] = barcode
 				if final_result not in results_tracker:
 					results_tracker[final_result] = 1
 				else:
 					results_tracker[final_result] += 1
 			else:
-				
+
 				if str(barcode) != "0":
-					samplesToCheck.append( (plateName, plateDate,barcode,well,val_cy5,val_fam,val_hex,auto_result,final_result, is_control))
+					samplesToCheck.append( (plateName, plateDate,barcode,well,val_cy5,val_fam,val_hex,val_tred,auto_result,final_result, is_control))
 
 			#if final_result not in ['POSITIVO','NEGATIVO','RIPETERE ESTRAZIONE','RIPETERE PCR','RIPETERE TAMPONE']:
 				#print("NOK")
@@ -158,14 +165,14 @@ for analFile in glob.glob(args.data_folder+'/*.xls*'):
 		print("-- ",len(samplesToAdd)," Campioni da aggiungere")
 		for result,counter in results_tracker.items():
 			print("----- ",counter," Campioni con esito ",result.lower())
-		
+
 
 	if(len(samplesToCheck) > 0):
 		print("-- ",len(samplesToCheck)," Campioni con errori | <span class=\"errorMessage\">ATTENZIONE</span>")
 		for k in samplesToCheck:
 			print("----- Barcode: ",k[2], ', pozzetto ',k[3],' (',k[8],')')
 
-	
+
 
 	for fluorophore in fluorophores:
 
@@ -174,16 +181,16 @@ for analFile in glob.glob(args.data_folder+'/*.xls*'):
 		except:
 			print("-- <span class=\"errorMessage\">ERRORE</span> - Non trovo la curva di ",fluorophore)
 
-		
+
 			sys.exit(0)
-		
+
 		data = sheetFam.values
 		cols = next(data)[1:]
 		data = list(data)
 		idx = [r[0] for r in data]
 		data = (islice(r, 1, None) for r in data)
 		df = pd.DataFrame(data, index=idx, columns=cols).set_index('Cycle')
-		
+
 
 		for wellTo in df.columns:
 			if wellTo in well2barcode:
@@ -192,7 +199,7 @@ for analFile in glob.glob(args.data_folder+'/*.xls*'):
 				curveString = ','.join(map(str,list(df[wellTo])))
 				curves2add.append( (plateName,wellDB,fluorophore,curveString) )
 try:
- 
+
 	if args.replace_data:
 		sql = 'DELETE FROM pcr_plates WHERE plate  = %s'
 		mycursor.execute(sql, (plateName,))
@@ -201,7 +208,7 @@ try:
 		print("-- Eliminazione dati vecchia plate | <span class=\"okMessage\">OK</span>")
 
 
-	sql = 'INSERT IGNORE INTO pcr_plates (plate, data_pcr, barcode, well, Cy5, FAM, HEX, esito_automatico, esito_pcr, isControl,batch_kf,kit) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
+	sql = 'INSERT IGNORE INTO pcr_plates (plate, data_pcr, barcode, well, Cy5, FAM, HEX, TRed, esito_automatico, esito_pcr, isControl,batch_kf,kit) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
 	mycursor.executemany(sql, samplesToAdd)
 	print("-- Caricamento Curve | <span class=\"okMessage\">OK</span>")
 
