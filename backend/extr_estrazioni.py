@@ -57,8 +57,6 @@ try:
 
 	print("-- Connessione al Database riuscita") 
 
-	sys.exit(0)
-
 	sql = "INSERT IGNORE INTO samples (barcode, data_checkin) VALUES (%s, %s)"
 	mycursor.executemany(sql, [(_[0],_[1]) for _ in samplesToAdd ] )
 
