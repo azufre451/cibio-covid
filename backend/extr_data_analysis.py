@@ -6,6 +6,7 @@ import argparse
 import glob
 import os
 import sys
+from collections import defaultdict
 from locale import atof, setlocale, LC_NUMERIC, LC_ALL
 from itertools import islice
 import pandas as pd
@@ -28,6 +29,7 @@ parser.add_argument('--data_folder', help='his is the folder containing all the 
 parser.add_argument('--control_wells', help="manual setup for control wells in the plate (list, space separated. Esample: A01 A02 A03 ...)", default=[], nargs='+')
 #parser.add_argument('--kit',default="bosphore")
 parser.add_argument('--replace_data', action='store_true',  help="overwrite the data")
+parser.add_argument('--dry_run', action='store_true',  help="Run without actually updating the database.")
 #parser.add_argument('--kf', action='store_true',help='Equals to --control_wells A01 A02 A12 D04 D08')
 #parser.add_argument('--old_plates', action='store_true',help='Equals to --control_wells H01 A01 A02 A05 A08 A12')
 parser.add_argument('--well_allow', default=[], nargs='+', help="Allows to override the plate setup to include a sample in an otherwise 'control' well")
@@ -73,23 +75,40 @@ except mysql.connector.Error as err:
 	print("-- <span class=\"errorMessage\">ERRORE</span> del Database: ", str(err))
 
 
+barcode2pool={}
+pool2barcode=defaultdict(set)
+estrazioniToAdd=[]
 samplesToAdd=[]
 curves2add=[]
 samplesToCheck=[]
-results_tracker={}
-
-well2barcode={}
+results_tracker=defaultdict(int)
 
 for analFile in glob.glob(args.data_folder+'/*.xls*'):
 
 	wb_obj = openpyxl.load_workbook(analFile,data_only=True, read_only=True)
+	wells_with_data = set()
 
 	try:
 		sheet = wb_obj["analysis"]
 	except:
 		#print("Error in finding Data tab", analFile )
 		print("-- ERRORE: il file non ha la tab 'analysis'")
-		sys.exit(0)
+		sys.exit(1)
+
+	has_estrazioni = "report_analysis" in wb_obj
+
+	if has_estrazioni:
+		report_sheet = wb_obj["report_analysis"]
+		hh={}
+		for row in report_sheet.iter_rows():
+			if len(hh) == 0:
+				hh = {field.value: pos for (pos, field) in enumerate(row)}
+				continue
+			if not int(row[hh['is_empty']].value):
+				barcode               = str(row[hh['barcode']].value)
+				pool_barcode          = str(row[hh['pool_barcode']].value)
+				barcode2pool[barcode] = pool_barcode
+				pool2barcode[pool_barcode].add(barcode)
 
 
 	hh={}
@@ -119,12 +138,18 @@ for analFile in glob.glob(args.data_folder+'/*.xls*'):
 		barcode= str(row[hh['barcode']].value)
 		batch_kf=str(row[hh['batch']].value)
 
+		batch_id  = str(row[hh['batch_kf']].value)
+		batchName = batch_id.split('_')[0]
+		batchDate = batch_id.split('_')[1]
+		realDate  = '20'+batchDate[0:2]+'-'+batchDate[2:4]+'-'+batchDate[4:6]
+
 		val_cy5 = na2none(row[hh['cy5_cq']].value)
 		val_fam = na2none(row[hh['fam_cq']].value)
 		val_hex = na2none(row[hh['hex_cq']].value)
 		val_tred = na2none(row[hh['texas_red_cq']].value)
-		isempty= int(row[hh['is_well_empy']].value)
-		is_control= int(row[hh['is_control']].value) # int(barcode in control_samples or well in WellsToAvoid)
+		isempty = int(row[hh['is_well_empy']].value)
+		is_control = int(row[hh['is_control']].value) # int(barcode in control_samples or well in WellsToAvoid)
+		is_pool = int(row[hh['is_pool']].value)
 
 		auto_result = row[hh['test_result_auto']].value
 
@@ -142,23 +167,36 @@ for analFile in glob.glob(args.data_folder+'/*.xls*'):
 				final_result = 'ERRORE COMPILAZIONE'
 
 		if str (barcode) != "0" and barcode != 'None' and  not isempty:
+			result = False
 
-
-			sql = 'SELECT 1 FROM samples WHERE barcode = %s'
-			mycursor.execute(sql, (barcode,))
-			mycursor.fetchone()
-			if(mycursor.rowcount > 0):
-						#print("OK", plateName,barcode,well,val_cy5,val_fam,val_hex,auto_result,final_result )
-				samplesToAdd.append ( (plateName, plateDate,barcode,well,val_cy5,val_fam,val_hex,val_tred,auto_result,final_result, is_control,batch_kf,kit))
-				well2barcode[well_nozero] = barcode
-				if final_result not in results_tracker:
-					results_tracker[final_result] = 1
+			if has_estrazioni:
+				if is_pool:
+					result = barcode in pool2barcode
 				else:
-					results_tracker[final_result] += 1
+					result = barcode in barcode2pool
 			else:
+				sql = 'SELECT 1 FROM samples WHERE barcode = %s'
+				mycursor.execute(sql, (barcode,))
+				mycursor.fetchone()
+				result = mycursor.rowcount > 0
 
-				if str(barcode) != "0":
-					samplesToCheck.append( (plateName, plateDate,barcode,well,val_cy5,val_fam,val_hex,val_tred,auto_result,final_result, is_control))
+			generate_row_data = lambda real_barcode, real_pool_barcode: (plateName, plateDate,real_barcode,real_pool_barcode,well,val_cy5,val_fam,val_hex,val_tred,auto_result,final_result, is_control,batch_kf,kit)
+
+			barcodes_in_well = pool2barcode[barcode] if is_pool else {barcode}
+
+			for bb in barcodes_in_well:
+				row_data = generate_row_data(bb, barcode)
+				# print("OK", *row_data)
+				if result:
+					estrazioniToAdd.append( (bb, realDate, batchName) )
+					samplesToAdd.append(row_data)
+					results_tracker[final_result] += 1
+					# print("OK", *estrazioniToAdd[len(estrazioniToAdd) - 1])
+				elif str(barcode) != "0":
+					samplesToCheck.append(row_data)
+
+			if result:
+				wells_with_data.add(well_nozero)
 
 			#if final_result not in ['POSITIVO','NEGATIVO','RIPETERE ESTRAZIONE','RIPETERE PCR','RIPETERE TAMPONE']:
 				#print("NOK")
@@ -194,36 +232,52 @@ for analFile in glob.glob(args.data_folder+'/*.xls*'):
 
 
 		for wellTo in df.columns:
-			if wellTo in well2barcode:
-				barcode = well2barcode[wellTo]
+			if wellTo in wells_with_data:
 				wellDB = wellTo[0]+wellTo[1:].zfill(2)
 				curveString = ','.join(map(str,list(df[wellTo])))
 				curves2add.append( (plateName,wellDB,fluorophore,curveString) )
-try:
+				# print("OK", *curves2add[len(curves2add) - 1])
 
-	if args.replace_data:
-		sql = 'DELETE FROM pcr_plates WHERE plate  = %s'
-		mycursor.execute(sql, (plateName,))
-		sql = 'DELETE FROM curves WHERE plate  = %s'
-		mycursor.execute(sql, (plateName,))
-		print("-- Eliminazione dati vecchia plate | <span class=\"okMessage\">OK</span>")
+if not args.dry_run:
+	try:
+
+		if args.replace_data:
+			sql = 'DELETE FROM pcr_plates WHERE plate  = %s'
+			mycursor.execute(sql, (plateName,))
+			sql = 'DELETE FROM curves WHERE plate  = %s'
+			mycursor.execute(sql, (plateName,))
+			print("-- Eliminazione dati vecchia plate | <span class=\"okMessage\">OK</span>")
+
+		if len(estrazioniToAdd) > 0:
+			sql = "INSERT IGNORE INTO samples (barcode, data_checkin) VALUES (%s, %s)"
+			mycursor.executemany(sql, [(_[0],_[1]) for _ in estrazioniToAdd ] )
+
+			print("-- "+str(mycursor.rowcount)+" Nuovi Campioni caricati")
+
+			sql = "INSERT IGNORE INTO estrazioni (barcode, data_estrazione, batch) VALUES (%s, %s,%s)"
+			mycursor.executemany(sql, estrazioniToAdd)
+
+			print("-- "+str(mycursor.rowcount)+" Nuove Estrazioni caricate")
+
+			print("-- Caricamento Campioni | <span class=\"okMessage\">OK</span>")
+
+		sql = 'INSERT IGNORE INTO pcr_plates (plate, data_pcr, barcode, pooled_barcode, well, Cy5, FAM, HEX, TRed, esito_automatico, esito_pcr, isControl,batch_kf,kit) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
+		mycursor.executemany(sql, samplesToAdd)
+		print("-- Caricamento Curve | <span class=\"okMessage\">OK</span>")
 
 
-	sql = 'INSERT IGNORE INTO pcr_plates (plate, data_pcr, barcode, well, Cy5, FAM, HEX, TRed, esito_automatico, esito_pcr, isControl,batch_kf,kit) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
-	mycursor.executemany(sql, samplesToAdd)
-	print("-- Caricamento Curve | <span class=\"okMessage\">OK</span>")
+		sql = 'INSERT IGNORE INTO curves (plate, well, fluorophore, curve) VALUES (%s,%s,%s,%s)'
+		mycursor.executemany(sql, curves2add)
+		print("-- Caricamento Plate | <span class=\"okMessage\">OK</span>")
 
 
-	sql = 'INSERT IGNORE INTO curves (plate, well, fluorophore, curve) VALUES (%s,%s,%s,%s)'
-	mycursor.executemany(sql, curves2add)
-	print("-- Caricamento Plate | <span class=\"okMessage\">OK</span>")
+		mydb.commit()
+		if len(samplesToCheck) == 0:
+			print("-- File caricato con successo, nessun errore! | <span class=\"okMessage\">OK</span>")
+		else:
+			print("-- File caricato con errori! | <span class=\"errorMessage\">ATTENZIONE</span>")
 
-
-	mydb.commit()
-	if len(samplesToCheck) == 0:
-		print("-- File caricato con successo, nessun errore! | <span class=\"okMessage\">OK</span>")
-	else:
-		print("-- File caricato con errori! | <span class=\"errorMessage\">ATTENZIONE</span>")
-
-except mysql.connector.Error as err:
-	print("-- <span class=\"errorMessage\">ERRORE</span> del Database: ", str(err))
+	except mysql.connector.Error as err:
+		print("-- <span class=\"errorMessage\">ERRORE</span> del Database: ", str(err))
+else:
+	print("Dry run enabled: Not updating the database.")
