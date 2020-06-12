@@ -10,6 +10,8 @@
 	.resultCell.red, tr.row_neg .fr, td.row_neg,#barcode_result .row_neg { background-color: #EB837A; }
 	.resultCell.green, tr.row_pos .fr, td.row_pos,#barcode_result .row_pos{ background-color: #a2f285; }
 	.resultCellYellow, tr.row_rep_pcr .fr, td.row_rep_pcr,#barcode_result .row_rep_pcr { background-color: #e0be58; }
+	.resultCellYellow, tr.row_co_pool .fr, td.row_co_pool,#barcode_result .row_co_pool { background-color: #93b7f8; }
+	
 	tr.row_ctrl{ display:none; }
 	tr.row_rep_ext .fr, td.row_rep_ext,#barcode_result .row_rep_ext { background-color: #d3b0ff; }
 
@@ -35,7 +37,8 @@
 	#wellLayout table tr.intest td{font-weight:bold; border-bottom:2px solid black;}
 	#wellLayout table td.intestRow{font-weight:bold; width:auto; padding:5px 15px; background-color: #CCC; border-right:2px solid black;}
 
-
+.show{display:block;}
+.hidden{display:none;}
 
 	#wellLayout tr.layoutRow td { text-align:center; width:60px; padding:5px 10px; border-bottom:1px solid #999; border-left:1px solid #999;} 
 

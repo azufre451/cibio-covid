@@ -39,14 +39,14 @@
 				<tr class="layoutRow" tal:repeat="layoutRow wellLayout">
 					<td class="intestRow" tal:content="repeat/layoutRow/key" />
 					<td tal:attributes="class layoutWell/0" tal:repeat="layoutWell layoutRow">
-						<a tal:condition="exists:layoutWell/1/barcode" tal:attributes="href string:search.php?barcode=${layoutWell/1/barcode}" tal:content="layoutWell/1/barcode" />
+						<a tal:condition="exists:layoutWell/1/barcode" tal:attributes="href string:search.php?barcode=${layoutWell/1/barcode}" tal:content="layoutWell/1/pooled_barcode" />
 					</td>
 				</tr>
 			</table>
 		</div>
 
 		<p class="headerText">Campioni associati alla ricerca: <a style="font-size:14px;" href="javascript:void(0)" onclick="jQuery('#samplesLayout').toggle();"> [ Nascondi / Mostra ] </a></p>
-		<div id="samplesLayout">
+		<div id="samplesLayout" tal:attributes="class samplesLayoutClass">
 			<table>
 				<tr class="intest"><td> Barcode </td> <td> Data di accettazione </td> <td> Batch di accettazione </td></tr>
 				<tr tal:repeat="batch batches">
@@ -92,13 +92,25 @@
 
 
 			<table style="margin-top:10px;">
-				<tr class="intest"> <td> Data PCR </td> <td> Plate </td>  <td> Barcode </td> <td>Batch KF</td> <td> Well</td>  <td> Cy5</td> <td> FAM</td> <td> HEX</td> <td> TRed</td>   <td> Esito PCR (Automatico) </td> <td> Esito PCR (Operatore) </td></tr>
+				<tr class="intest"> <td> Data PCR </td> <td> Plate </td> <td> Barcode </td> <td>Batch KF</td> <td tal:condition="exists:wellLayout"> Pool </td>  <td tal:condition="not:exists:wellLayout"> Altri Campioni <br /> nel Pool </td> <td> Well</td>  <td> Cy5</td> <td> FAM</td> <td> HEX</td> <td> TRed</td>   <td> Esito PCR (Automatico) </td> <td> Esito PCR (Operatore) </td></tr>
 				<tbody  tal:repeat="pcr PCRs"> 
 					<tr tal:attributes="class pcr/htmlClass" >
 						<td class="resultCell" style="width:120px" tal:content="pcr/data_pcr"/>
 						<td class="resultCell" style="width:120px"><a tal:attributes="href string:search.php?plate=${pcr/plate}" ><span tal:content="php:substr(pcr['plate'],0,strlen(pcr['plate'])-2)" /><span style="font-size:21px; font-weight:bold;" tal:content="php:substr(pcr['plate'],strlen(pcr['plate'])-2)" /></a></td>
 						<td class="resultCell" style="width:120px" ><a tal:attributes="href string:search.php?barcode=${pcr/barcode}" tal:content="pcr/barcode" /></td>
 						<td class="resultCell" style="width:100px; text-align:center" tal:content="pcr/batch_kf"/>
+
+						<td class="resultCell" style="width:100px; text-align:center" tal:condition="php:(count(pcr['poolList']) == 0)" tal:content="pcr/pooled_barcode">
+							
+						</td>
+
+						<td class="resultCell" style="width:100px; text-align:center" tal:condition="php:(count(pcr['poolList']) GT 0)">
+							<span tal:content="pcr/pooled_barcode" style="font-weight:bold; font-size:16px;" />
+							<p style="margin:0px;" tal:repeat="pooled pcr/poolList">
+									<a tal:attributes="href string:search.php?barcode=${pooled}" style="font-size:16px;" tal:content="pooled" />
+								
+							</p>
+						</td>
 						<td class="resultCell" style="width:100px; text-align:center" tal:content="pcr/well"/>
 						
 						<td class="resultCell" style="width:80px; text-align:center" tal:content="pcr/Cy5"/>

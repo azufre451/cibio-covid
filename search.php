@@ -65,12 +65,15 @@ if (isSet($_GET['barcode']) || isSet($_POST['barcode']))
 	{
 		$batches[] = $ras;
 	}
+
+
 	                                  
 
 	$res = mysql_query("SELECT * FROM pcr_plates WHERE barcode IN ('$bcdList') ORDER BY data_pcr ASC");
 	$PCRs = array();
 	while ($ras = mysql_fetch_assoc($res))
 	{
+
 
 		
 
@@ -97,15 +100,36 @@ if (isSet($_GET['barcode']) || isSet($_POST['barcode']))
 		{
 			$ras['curves'][$curve['fluorophore']]=$curve['curve'];
 		}
+		
+
+		// now add the other members of the pool, if any
+
+		$poolID = $ras['pooled_barcode'];
+		$plateID = $ras['plate'];
+		$thisBarcode = $ras['barcode'];
+
+		$poolList = array();
+
+
+		$resPool = mysql_query("SELECT barcode FROM pcr_plates WHERE barcode <> '$thisBarcode' AND pooled_barcode = '$poolID' AND plate = '$plateID'");
+		while ($rasPool = mysql_fetch_assoc($resPool))		
+		{
+			$poolList[] = $rasPool['barcode'];
+		}
+
+		$ras['poolList'] = $poolList;
 		$PCRs[] = $ras;
 
 	}
+
+
 
 
 	$template = new PHPTAL('TEMPLATES/search_results.html');
 	$template->searchKey = 'Barcode :: '. $bcdReadableList;
 
 	$template->samples = $samples;
+	$template->samplesLayoutClass = 'show';
 	$template->batches = $batches;
 	$template->PCRs = $PCRs;
 	$template->fluor2colors=$fluor2colors;
@@ -137,7 +161,7 @@ elseif (isSet($_GET['plate']))
 	}
 	                                  
 
-	$res = mysql_query("SELECT * FROM pcr_plates WHERE plate = '$plate' ORDER BY barcode ASC");
+	$res = mysql_query("SELECT * FROM pcr_plates WHERE plate = '$plate' ORDER BY pooled_barcode,barcode");
 	$wellLayout=array();
 
 	foreach(range(0,7) as $k)
@@ -198,7 +222,7 @@ elseif (isSet($_GET['plate']))
 	$template = new PHPTAL('TEMPLATES/search_results.html');
 	$template->searchKey = 'Plate di PCR :: '. $plate;
 
-
+	$template->samplesLayoutClass='hidden';
 	$template->samples = $samples;
 	$template->batches = $batches;
 	$template->PCRs = $PCRs;
@@ -216,7 +240,7 @@ elseif (isSet($_POST['date']))
 	$PCRs = array();       
 	$esitiTracker = array();
 
-	$res = mysql_query("SELECT * FROM pcr_plates WHERE data_pcr = '$date' ORDER BY plate ASC, barcode ASC");
+	$res = mysql_query("SELECT * FROM pcr_plates WHERE data_pcr = '$date' ORDER BY plate ASC, pooled_barcode,barcode");
 	
 	while ($ras = mysql_fetch_assoc($res))
 	{
@@ -270,6 +294,7 @@ elseif (isSet($_POST['date']))
 	$template = new PHPTAL('TEMPLATES/search_results_pcr.html');
 	$template->searchKey = 'Data di PCR :: '. $date;
 	$template->PCRs = $PCRs;
+	$template->samplesLayoutClass='show';
 	$template->esitiTracker=$esitiTracker;
 	
 }
