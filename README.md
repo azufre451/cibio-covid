@@ -1,8 +1,12 @@
 # CIBIO-COVID
 
-CIBIO Covid Code - Maintenance and Update scripts. This repo contains the code for the intranet system developed to support the COVID-19 testing operations ad the DMA Lab of the University of Trento.
+This repo contains the code developed for the intranet system to support the COVID-19 testing operations ad the DMA Lab of the University of Trento. The repo contains two main parts:
+
+- A backend written in Python to allow for the operators to upload analysis files
+- A frontend written in PHP/HTML/SQL to organize the data and to provide structured interface to them. This is currently deplyed at [http://colab1.cibio.unitn.it:8080/cibio-covid/index.php](http://colab1.cibio.unitn.it:8080/cibio-covid/index.php)
 
 ![](https://github.com/azufre451/cibio-covid/blob/master/TEMPLATES/img/example_covid_2.jpg)
+*Frontend search page: one PCR sample is shown and the PCR curves are shown, together with the COVID-19 test outcome*
 
 ## Requirements
 
