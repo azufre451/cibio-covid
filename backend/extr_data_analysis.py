@@ -138,10 +138,11 @@ for analFile in glob.glob(args.data_folder+'/*.xls*'):
 		barcode= str(row[hh['barcode']].value)
 		batch_kf=str(row[hh['batch']].value)
 
-		batch_id  = str(row[hh['batch_kf']].value)
-		batchName = batch_id.split('_')[0]
-		batchDate = batch_id.split('_')[1]
-		realDate  = '20'+batchDate[0:2]+'-'+batchDate[2:4]+'-'+batchDate[4:6]
+		if has_estrazioni:
+			batch_id  = str(row[hh['batch_kf']].value)
+			batchName = batch_id.split('_')[0]
+			batchDate = batch_id.split('_')[1]
+			realDate  = '20'+batchDate[0:2]+'-'+batchDate[2:4]+'-'+batchDate[4:6]
 
 		val_cy5 = na2none(row[hh['cy5_cq']].value)
 		val_fam = na2none(row[hh['fam_cq']].value)
@@ -149,7 +150,7 @@ for analFile in glob.glob(args.data_folder+'/*.xls*'):
 		val_tred = na2none(row[hh['texas_red_cq']].value)
 		isempty = int(row[hh['is_well_empy']].value)
 		is_control = int(row[hh['is_control']].value) # int(barcode in control_samples or well in WellsToAvoid)
-		is_pool = int(row[hh['is_pool']].value)
+		is_pool = int(row[hh['is_pool']].value) if 'is_pool' in hh else False
 
 		auto_result = row[hh['test_result_auto']].value
 
