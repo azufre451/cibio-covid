@@ -189,7 +189,7 @@ for analFile in glob.glob(args.data_folder+'/*.xls*'):
 				row_data = generate_row_data(bb, barcode)
 				# print("OK", *row_data)
 				if result:
-					estrazioniToAdd.append( (bb, realDate, batchName) )
+					if has_estrazioni: estrazioniToAdd.append( (bb, realDate, batchName) )
 					samplesToAdd.append(row_data)
 					results_tracker[final_result] += 1
 					# print("OK", *estrazioniToAdd[len(estrazioniToAdd) - 1])

@@ -58,6 +58,7 @@
 		<li> <span style="font-weight: bold; text-decoration: underline;">File di Analisi</span>: caricare il file Excel salvato nella cartella DMA/analisi (per esempio <span class="emph">8_200508.xlsm</span>) </li><br />
 
 
+		<li><span style="color:red; font-weight:bold; font-size:22px; text-decoration:underline;">Nota 0: </span> Per le plate "pooled" non è necessario caricare il file estrazioni</li>
 		<li><span style="color:red; font-weight:bold;">Nota 1: </span> non caricare il file "Summary Estrazioni", ma il singolo file di ogni batch.</li>
 		<li><span style="color:red; font-weight:bold;">Nota 2: </span> Vanno caricati sempre prima i file di estrazione, e poi i file di analisi.</li></ul></p>
 		<form action="load_data.php" method="POST" enctype="multipart/form-data">
@@ -71,8 +72,8 @@
 			<tr>
 			  <td> <b>Cosa stai caricando:</b></td>
 			  	<td> <select onchange="javascript:checker(this);" style="border:1px solid #444; padding:5px;" name="uploadtype">
-			  	<optgroup label="Analisi"><option value="analisi">File di Analisi</option></optgroup>
-			  	<optgroup label="Estrazioni"><option value="estrazioni" selected="selected">File di Estrazioni Kingfisher</option></optgroup>
+			  	<optgroup label="Analisi"><option value="analisi" selected="selected">File di Analisi</option></optgroup>
+			  	<optgroup label="Estrazioni"><option value="estrazioni" >File di Estrazioni Kingfisher</option></optgroup>
 			  	<!--<optgroup label="Ministero"><option value="ministero">File Ministero</option></optgroup>-->
 			  </select></td>
 			</tr>
