@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: colab1.cibio.unitn.it:33006
--- Creato il: Mag 12, 2020 alle 20:05
+-- Creato il: Mag 11, 2021 alle 08:47
 -- Versione del server: 8.0.19
 -- Versione PHP: 7.4.4
 
@@ -56,12 +56,13 @@ CREATE TABLE `pcr_plates` (
   `plate` varchar(100) NOT NULL,
   `data_pcr` date NOT NULL,
   `barcode` varchar(100) NOT NULL,
+  `pooled_barcode` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `well` varchar(10) NOT NULL,
   `Cy5` float DEFAULT NULL,
   `FAM` float DEFAULT NULL,
   `HEX` float DEFAULT NULL,
   `TRed` float DEFAULT NULL,
-  `esito_automatico` enum('POSITIVO','NEGATIVO','DUBBIO TECNICO','CONTROLLO') CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `esito_automatico` enum('POSITIVO','NEGATIVO','DUBBIO TECNICO','CONTROLLO','RIPETERE TAMPONE') CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `esito_pcr` enum('POSITIVO','NEGATIVO','RIPETERE PCR','RIPETERE ESTRAZIONE','ERRORE COMPILAZIONE','RIPETERE TAMPONE','CONTROLLO') CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `isControl` tinyint(1) NOT NULL DEFAULT '0',
   `batch_kf` varchar(3) NOT NULL,
