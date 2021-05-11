@@ -1,9 +1,14 @@
 <?
 
+session_start();
 include('includes/app_include.php');
-
 include('includes/PHPTAL-1.3.0/PHPTAL.php');
 
+if(!isSet($_SESSION['username']))
+{
+	header("Location:login.php");
+	exit;
+}
 
 $template = new PHPTAL('TEMPLATES/search_barcode_interactive.html');
 $template->appVersion = $appVersion;

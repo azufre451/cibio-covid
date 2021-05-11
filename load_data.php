@@ -1,8 +1,6 @@
 <?php
 
 session_start();
-
-
 include('includes/app_include.php');
 include('includes/PHPTAL-1.3.0/PHPTAL.php');
 
@@ -55,6 +53,7 @@ if( isSet ($_GET['dologin']))
     }
 
 }
+
 if( isSet( $_FILES["fileToUpload"]) )
 {
     if(!isSet($_SESSION['username'])){

@@ -7,6 +7,9 @@
 
 		<div style="width:600px; margin:auto;">
 
+
+		<a href="login.php" tal:condition="not:exists:loginOk"> Effettua il login per fare ricerche </a>
+
 		<div style="padding:5px 20px; margin-top: 20px; background-color:#b3dc8e; border: 1px solid #999;">
 		<p style="font-weight:bold;"> Ricerca specifico Barcode Campione. Puoi cercare più di un barcode separando i barcode con una virgola ","</p>
 		<form action="search.php" method="POST">

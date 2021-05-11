@@ -1,0 +1,57 @@
+<html>
+<head>
+	<style>
+		.okMessage{
+			color:green;
+			font-weight:bold;
+			font-size:1.1em;
+		}
+		.errorMessage{
+			color:red;
+			font-weight:bold;
+			font-size:1.1em;
+		}
+		.emph{
+			color:#1b73c1;
+			font-weight: bold;
+			font-style: italic;
+		}
+	</style>
+	<script type="text/javascript" src="TEMPLATES/js/jquery.js" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/core.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/md5.js"></script>
+	<script>
+	    
+	    function crypt(ida){
+
+	    	var passhash = CryptoJS.MD5(jQuery('#password',ida).val()).toString();
+	    	
+	    	jQuery('#password',ida).val(passhash);
+	    	
+	    	
+	    	
+	    }
+		function checker(ida){
+			
+			if (jQuery(ida).val()!='estrazioni')
+				jQuery('#checkboxTR').fadeIn();
+			else
+				jQuery('#checkboxTR').fadeOut();
+		}
+	</script>
+</head>
+<body>
+		<div style="padding:5px 20px; margin-top: 20px; width:50%; margin:auto; background-color:#c4d89f; border: 1px solid #999;">
+			<p> Questa funzione richiede il login. Inserire le credenziali di accesso </p>
+			<form method="POST" action="login.php?dologin=true" onsubmit="javascript:crypt(this);">
+				<table style="width:300px; margin:auto;">
+					<tr><td style="font-weight: bold;">Username</td> <td width="100px;"> <input type="text" name="username"/>  </td></tr>
+					<tr><td style="font-weight: bold;">Password</td> <td width="100px;"> <input id="password" type="password" name="password"/>  </td></tr>
+					<tr><td></td> <td style="text-align:center;"> <input width="100px;" type="submit" value="Invia" /></td></tr>
+
+				</table>
+
+			</form>
+		</div>
+</body>
+</html>
